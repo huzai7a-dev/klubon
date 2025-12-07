@@ -1,22 +1,12 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, ViewStyle } from "react-native";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { Colors } from "../../constants/theme";
-
-interface Props {
-  title?: string;
-  onPress?: () => void;
-  disabled?: boolean;
-  style?: ViewStyle;
-  compact?: boolean;
-}
 
 export default function PrimaryButton({
   title = "Sign In",
   onPress,
   disabled = false,
-  style,
-  compact = false,
-}: Props) {
+}) {
   return (
     <TouchableOpacity
       activeOpacity={0.85}
@@ -24,14 +14,10 @@ export default function PrimaryButton({
       disabled={disabled}
       style={[
         styles.btn,
-        compact && styles.btnCompact,
         { backgroundColor: disabled ? "#CFCFCF" : Colors.light.tint },
-        style,
       ]}
     >
-      <Text style={[styles.title, compact && styles.titleCompact]}>
-        {title}
-      </Text>
+      <Text style={styles.title}>{title}</Text>
     </TouchableOpacity>
   );
 }
@@ -44,24 +30,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 12,
-    shadowColor: Colors.light.tint,
-    shadowOpacity: 0.2,
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
     shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 4,
-  },
-  btnCompact: {
-    height: 44,
-    marginVertical: 0,
-    borderRadius: 12,
+    elevation: 2,
   },
   title: {
     color: "#fff",
     fontWeight: "700",
     fontSize: 16,
-  },
-  titleCompact: {
-    fontSize: 15,
-    fontWeight: "600",
   },
 });

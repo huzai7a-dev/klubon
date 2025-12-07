@@ -2,14 +2,7 @@ import FilterChip from "@/components/ui/FilterChip";
 import ProfileCard from "@/components/ui/ProfileCard";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
-import {
-  FlatList,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, Platform, StyleSheet, Text, View } from "react-native";
 
 const MOCK_USERS = [
   {
@@ -86,23 +79,23 @@ export default function DiscoverScreen() {
       </View>
 
       <View style={styles.filterBarWrap}>
-        <ScrollView
+        <FlatList
+          data={FILTERS}
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.filterRow}
-        >
-          {FILTERS.map((f) => (
+          keyExtractor={(item) => item}
+          renderItem={({ item }) => (
             <FilterChip
-              key={f}
-              label={f}
-              isActive={activeFilter === f}
+              label={item}
+              isActive={activeFilter === item}
               onPress={() => {
-                console.log("Filter chip pressed: " + f);
-                setActiveFilter((prev) => (prev === f ? null : f));
+                console.log("Filter chip pressed: " + item);
+                setActiveFilter((prev) => (prev === item ? null : item));
               }}
             />
-          ))}
-        </ScrollView>
+          )}
+        />
       </View>
 
       <FlatList
@@ -119,7 +112,7 @@ export default function DiscoverScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#F7F9FB",
+    backgroundColor: "#FFF9F3",
     paddingHorizontal: 18,
     paddingTop: Platform.OS === "ios" ? 64 : 48,
   },

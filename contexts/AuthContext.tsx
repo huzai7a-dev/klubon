@@ -1,41 +1,46 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import { useStorageState } from "@/hooks/useStorageState";
+import { createContext, use, type PropsWithChildren } from "react";
 
-type AuthContextType = {
-  isAuthenticated: boolean;
-  signIn: (method?: string) => void;
+const AuthContext = createContext<{
+  signIn: () => void;
   signOut: () => void;
-};
-
-const AuthContext = createContext<AuthContextType>({
-  isAuthenticated: false,
-  signIn: () => {},
-  signOut: () => {},
+  session?: string | null;
+  isLoading: boolean;
+}>({
+  signIn: () => null,
+  signOut: () => null,
+  session: null,
+  isLoading: false,
 });
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+// Use this hook to access the user info.
+export function useSession() {
+  const value = use(AuthContext);
+  if (!value) {
+    throw new Error("useSession must be wrapped in a <SessionProvider />");
+  }
 
-  console.log(isAuthenticated, "isAuthenticated in AuthProvider");
-  const signIn = (method?: string) => {
-    console.log("Mock sign in with", method);
-    // Simulate async auth, then set authenticated
-    setIsAuthenticated(true);
-  };
+  return value;
+}
 
-  const signOut = () => {
-    console.log("Mock sign out");
-    setIsAuthenticated(false);
-  };
+export function SessionProvider({ children }: PropsWithChildren) {
+  const [[isLoading, session], setSession] = useStorageState("session");
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, signIn, signOut }}>
+    <AuthContext.Provider
+      value={{
+        signIn: () => {
+          // Perform sign-in logic here
+          setSession("xxx");
+        },
+        signOut: () => {
+          setSession(null);
+        },
+        session,
+        isLoading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 }
-
-export function useAuth() {
-  return useContext(AuthContext);
-}
-
-export default AuthContext;

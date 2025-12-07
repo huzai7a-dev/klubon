@@ -33,17 +33,18 @@ export default function FilterChip({
 
 const styles = StyleSheet.create({
   chip: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
     marginRight: 10,
+    marginTop: 10,
     borderWidth: 1,
-    minHeight: 36,
+    minHeight: 32,
     justifyContent: "center",
     alignItems: "center",
   },
   label: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: "600",
   },
   inactive: {
@@ -51,8 +52,7 @@ const styles = StyleSheet.create({
     borderColor: "#E6E9EE",
   },
   active: {
-    // light primary background using 8-digit hex alpha (approx 13% opacity)
-    backgroundColor: Colors.light.tint + "22",
+    backgroundColor: Colors.light.light,
     borderColor: Colors.light.tint,
   },
   inactiveLabel: {

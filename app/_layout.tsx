@@ -6,38 +6,38 @@ import {
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
-import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { SessionProvider, useSession } from "@/contexts/AuthContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Stack } from "expo-router";
 import React from "react";
 
 export const unstable_settings = {
-  anchor: "(tabs)",
+  initialRouteName: "(app)",
 };
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <AuthProvider>
+    <SessionProvider>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <StatusBar style="auto" />
-        <ProtectedStack />
+        <RootNavigator />
       </ThemeProvider>
-    </AuthProvider>
+    </SessionProvider>
   );
 }
 
-function ProtectedStack() {
-  const { isAuthenticated } = useAuth();
+function RootNavigator() {
+  const { session } = useSession();
 
   return (
     <Stack>
-      <Stack.Protected guard={!isAuthenticated}>
-        <Stack.Screen name="login" options={{ headerShown: false }} />
+      <Stack.Protected guard={!session}>
+        <Stack.Screen name="(auth)/index" options={{ headerShown: false }} />
       </Stack.Protected>
 
-      <Stack.Protected guard={isAuthenticated}>
+      <Stack.Protected guard={!!session}>
         <Stack.Screen name="(app)" options={{ headerShown: false }} />
       </Stack.Protected>
     </Stack>

@@ -47,6 +47,7 @@ export default function SocialSignInButton({ provider, onPress }: Props) {
         {
           backgroundColor: meta.bg,
           borderColor: meta.borderColor || "#E6E6E6",
+          
         },
       ]}
     >
@@ -75,8 +76,10 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     paddingHorizontal: 14,
-    justifyContent: "center",
     marginVertical: 8,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   row: {
     flexDirection: "row",
