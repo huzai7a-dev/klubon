@@ -9,6 +9,7 @@ const MOCK_USERS = [
   {
     id: "1",
     name: "Alex Carter",
+    age: 24,
     distance: "3.1 km",
     activities: ["Basketball", "Casual", "Running"],
     photoUrl:
@@ -17,34 +18,38 @@ const MOCK_USERS = [
   {
     id: "2",
     name: "Maya Gonzales",
+    age: 22,
     distance: "1.8 km",
     activities: ["Table Tennis", "Casual"],
     photoUrl:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=60",
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=60",
   },
   {
     id: "3",
     name: "Jordan Lee",
+    age: 27,
     distance: "5.0 km",
     activities: ["Basketball", "Competitve"],
     photoUrl:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=60",
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=60",
   },
   {
     id: "4",
     name: "Sofia Rivera",
+    age: 25,
     distance: "0.9 km",
     activities: ["Casual", "Yoga"],
     photoUrl:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=60",
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=800&q=60",
   },
   {
     id: "5",
     name: "Liam Brown",
+    age: 29,
     distance: "12 km",
     activities: ["Cycling", "Running"],
     photoUrl:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=60",
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=60",
   },
 ];
 
@@ -113,7 +118,7 @@ export default function DiscoverScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: Colors.background,
     paddingHorizontal: 18,
     paddingTop: Platform.OS === "ios" ? 64 : 48,
   },

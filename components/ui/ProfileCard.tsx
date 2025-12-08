@@ -1,17 +1,17 @@
 import { MaterialIcons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
 import React from "react";
 import {
   Image,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
   ViewStyle,
 } from "react-native";
 import { Colors } from "../../constants/theme";
-import FilterChip from "./FilterChip";
 import PrimaryButton from "./PrimaryButton";
-import StarRating from "./StarRating";
 
 interface User {
   id: string;
@@ -20,6 +20,7 @@ interface User {
   rating?: number;
   activities: string[];
   photoUrl?: string;
+  age?: number; // Added optional age since it's in the design
 }
 
 interface Props {
@@ -31,141 +32,159 @@ export default function ProfileCard({ user, style }: Props) {
   const router = useRouter();
 
   const handleViewProfile = () => {
-    // Navigate to profile page with user id
-    // You can create a profile/[id].tsx route in app/(app)/profile/[id].tsx
-    try {
-      router.push(`/profile/${user.id}` as any);
-    } catch (error) {
-      // Fallback if route doesn't exist yet
-      console.log("View profile for:", user.id, user.name);
-    }
+    // Navigate to profile page
+    router.push(`/profile/${user.id}` as any);
+  };
+
+  const handleMessage = () => {
+    console.log("Message", user.name);
+  };
+
+  const handleFavorite = () => {
+    console.log("Favorite", user.name);
   };
 
   return (
     <View style={[styles.card, style]}>
-      {/* Profile Image */}
-      <View style={styles.imageContainer}>
-        <Image
-          source={{ uri: user.photoUrl || "https://placekitten.com/800/600" }}
-          style={styles.image}
-          resizeMode="cover"
-        />
-        {/* Distance badge */}
-        <View style={styles.distanceBadge}>
-          <MaterialIcons name="location-on" size={14} color={Colors.white} />
-          <Text style={styles.distanceText}>{user.distance}</Text>
-        </View>
-      </View>
+      {/* Full Bleed Image */}
+      <Image
+        source={{ uri: user.photoUrl || "https://placekitten.com/800/600" }}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+      />
 
-      {/* User Info Section */}
-      <View style={styles.content}>
-        <View style={styles.header}>
-          <View style={styles.userInfo}>
+      {/* Gradient/Blur Overlay */}
+      <BlurView intensity={40} tint="dark" style={styles.overlay}>
+        <View style={styles.contentContainer}>
+          {/* Name & Age */}
+          <Text style={styles.nameRow}>
             <Text style={styles.name}>{user.name}</Text>
-            <View style={styles.ratingRow}>
-              <StarRating
-                rating={user.rating ?? 4.5}
-                size={14}
-                showNumber={true}
-              />
-            </View>
+            {user.age && <Text style={styles.age}>, {user.age}</Text>}
+          </Text>
+
+          {/* Location */}
+          <View style={styles.locationRow}>
+            <MaterialIcons name="location-on" size={16} color={Colors.white} />
+            <Text style={styles.locationText}>{user.distance}</Text>
+          </View>
+
+          {/* Activity Chips */}
+          <View style={styles.chipRow}>
+            {user.activities.slice(0, 3).map((activity) => (
+              <View key={activity} style={styles.chip}>
+                <Text style={styles.chipText}>{activity}</Text>
+              </View>
+            ))}
+          </View>
+
+          {/* Action Buttons */}
+          <View style={styles.actionRow}>
+            <PrimaryButton
+              title="View Profile"
+              onPress={handleViewProfile}
+              style={{ flex: 1, marginVertical: 0 }}
+            />
           </View>
         </View>
+      </BlurView>
 
-        {/* Activity Tags */}
-        <View style={styles.activityRow}>
-          {user.activities.slice(0, 3).map((activity) => (
-            <FilterChip
-              key={activity}
-              label={activity}
-              isActive={true}
-              onPress={() => console.log("Activity", activity)}
-            />
-          ))}
-        </View>
-
-        {/* View Profile Button */}
-        <PrimaryButton
-          title="View Profile"
-          onPress={handleViewProfile}
-          compact={true}
-          style={styles.profileButton}
-        />
-      </View>
+      {/* Invisible Touch Area to maintain card tap behavior if needed, 
+          but usually buttons handle actions. 
+          If the user wants the whole card to be tappable to view profile: */}
+      <TouchableOpacity
+        style={styles.touchableFill}
+        onPress={handleViewProfile}
+        activeOpacity={1}
+      />
     </View>
   );
 }
 
-const BORDER_RADIUS = 16;
-const IMAGE_HEIGHT = 200;
-
 const styles = StyleSheet.create({
   card: {
     width: "100%",
-    borderRadius: BORDER_RADIUS,
-    backgroundColor: Colors.white,
-    marginBottom: 16,
-    overflow: "hidden",
-    shadowColor: Colors.black,
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 4,
-  },
-  imageContainer: {
-    width: "100%",
-    height: IMAGE_HEIGHT,
-    position: "relative",
+    height: 500, // Taller card for the full-screen feel
+    borderRadius: 24,
     backgroundColor: Colors.greyLight,
+    marginBottom: 20,
+    overflow: "hidden",
+    position: "relative",
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 5,
   },
-  image: {
-    width: "100%",
-    height: "100%",
+  touchableFill: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: -1, // Behind buttons but accessible if nothing else caught it? 
+    // Actually, on RN zIndex doesn't work well for "pass through". 
+    // Better to just let buttons be on top.
+    // If we want the background to be tappable, we'd wrap content. 
+    // For now, let's assume the buttons are the primary actions, 
+    // but typically tapping the face opens profile.
   },
-  distanceBadge: {
+  overlay: {
     position: "absolute",
-    top: 12,
-    right: 12,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 15,
+    paddingBottom: 24,
+    // Add a slight gradient-like background if blur isn't enough or for better contrast
+    backgroundColor: "rgba(0,0,0,0.3)",
+  },
+  contentContainer: {
+    gap: 6,
+  },
+  nameRow: {
+    color: Colors.white,
+    marginBottom: 2,
+  },
+  name: {
+    fontSize: 26,
+    fontWeight: "800",
+    color: Colors.white,
+  },
+  age: {
+    fontSize: 26,
+    fontWeight: "400",
+    color: Colors.white,
+  },
+  locationRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-    paddingHorizontal: 10,
+    marginBottom: 8,
+  },
+  locationText: {
+    color: Colors.white,
+    fontSize: 14,
+    marginLeft: 4,
+    fontWeight: "500",
+  },
+  chipRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    marginBottom: 12,
+  },
+  chip: {
+    paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.4)",
+    backgroundColor: "rgba(0,0,0,0.2)",
   },
-  distanceText: {
+  chipText: {
     color: Colors.white,
     fontSize: 12,
     fontWeight: "600",
-    letterSpacing: -0.2,
-    marginLeft: 4,
   },
-  content: {
-    padding: 16,
-  },
-  header: {
-    marginBottom: 12,
-  },
-  userInfo: {
-    marginBottom: 8,
-  },
-  name: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: Colors.text,
-    letterSpacing: -0.4,
-    marginBottom: 6,
-  },
-  ratingRow: {
-    marginTop: 2,
-  },
-  activityRow: {
+  actionRow: {
     flexDirection: "row",
-    alignItems: "center",
-    flexWrap: "wrap",
-    marginBottom: 16,
-  },
-  profileButton: {
-    marginTop: 4,
+    justifyContent: "center",
+    marginTop: 2,
+    //paddingHorizontal: 1, // Add some padding for the button
   },
 });
