@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, TextInput, TextInputProps, View } from "react-native";
+import { Colors } from "../../constants/theme";
 
 interface Props extends TextInputProps {
   placeholder?: string;
@@ -21,7 +22,7 @@ export default function TextInputField({
         value={value}
         onChangeText={onChangeText}
         keyboardType={keyboardType}
-        placeholderTextColor="#9AA0A6"
+        placeholderTextColor={Colors.greyNormal}
         style={styles.input}
         {...props}
       />
@@ -33,9 +34,9 @@ const styles = StyleSheet.create({
   wrap: {
     width: "100%",
     borderRadius: 12,
-    backgroundColor: "#FAFAFB",
+    backgroundColor: Colors.white,
     borderWidth: 1,
-    borderColor: "#ECEFF1",
+    borderColor: Colors.greyLight,
     paddingHorizontal: 14,
     paddingVertical: 6,
     marginVertical: 8,
@@ -43,6 +44,6 @@ const styles = StyleSheet.create({
   input: {
     height: 44,
     fontSize: 16,
-    color: "#111",
+    color: Colors.text,
   },
 });

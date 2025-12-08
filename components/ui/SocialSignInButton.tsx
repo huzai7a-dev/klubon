@@ -1,6 +1,7 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Colors } from "../../constants/theme";
 
 type Provider = "google" | "facebook" | string;
 
@@ -22,15 +23,15 @@ const PROVIDER_META: Record<
   google: {
     label: "Continue with Google",
     icon: "google",
-    bg: "#fff",
-    textColor: "#111",
-    borderColor: "#E6E6E6",
+    bg: Colors.white,
+    textColor: Colors.text,
+    borderColor: Colors.greyLight,
   },
   facebook: {
     label: "Continue with Facebook",
     icon: "facebook",
     bg: "#1877F2",
-    textColor: "#fff",
+    textColor: Colors.white,
     borderColor: "#1877F2",
   },
 };
@@ -46,8 +47,8 @@ export default function SocialSignInButton({ provider, onPress }: Props) {
         styles.button,
         {
           backgroundColor: meta.bg,
-          borderColor: meta.borderColor || "#E6E6E6",
-          
+          borderColor: meta.borderColor || Colors.greyLight,
+
         },
       ]}
     >

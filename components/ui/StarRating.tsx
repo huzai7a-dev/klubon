@@ -1,6 +1,7 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, Text, View, ViewStyle } from "react-native";
+import { Colors } from "../../constants/theme";
 
 interface Props {
   rating: number; // current rating (e.g. 4.5)
@@ -15,7 +16,7 @@ export default function StarRating({
   rating,
   max = 5,
   size = 16,
-  color = "#FFD700",
+  color = Colors.yellow,
   showNumber = true,
   style,
 }: Props) {
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
   },
   text: {
     marginLeft: 8,
-    color: "#E6EEF8",
+    color: Colors.greyNormal,
     fontSize: 12,
   },
 });

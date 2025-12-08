@@ -1,5 +1,6 @@
 import FilterChip from "@/components/ui/FilterChip";
 import ProfileCard from "@/components/ui/ProfileCard";
+import { Colors } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
 import { FlatList, Platform, StyleSheet, Text, View } from "react-native";
@@ -75,7 +76,7 @@ export default function DiscoverScreen() {
     <View style={styles.screen}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>KLUBON</Text>
-        <Ionicons name="options-outline" size={22} color="#0B1220" />
+        <Ionicons name="options-outline" size={22} color={Colors.text} />
       </View>
 
       <View style={styles.filterBarWrap}>
@@ -112,7 +113,7 @@ export default function DiscoverScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#FFF9F3",
+    backgroundColor: Colors.primaryLight,
     paddingHorizontal: 18,
     paddingTop: Platform.OS === "ios" ? 64 : 48,
   },
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: "900",
-    color: "#0B1220",
+    color: Colors.text,
   },
   filterBarWrap: {
     height: 56,

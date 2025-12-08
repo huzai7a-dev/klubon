@@ -9,24 +9,25 @@ const tintColorLight = '#F28C28';
 const tintColorDark = '#fff';
 
 export const Colors = {
-  light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
-    light: "#FFF3E0"
-  },
-  dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
-    light: "#FFF3E0"
-  },
+  primary: '#F28C28',
+  primaryLight: '#FFF3E0', // Light version of orange
+  text: '#11181C', // Dark grey/black (not solid)
+  black: '#11181C', // Not solid black
+  white: '#FCFCFC', // Not solid white
+  red: '#D32F2F', // Error color
+  redLight: '#FFEBEE', // Very light shade of red
+  green: '#388E3C', // Success color
+  greenLight: '#E8F5E9', // Light green
+  yellow: '#FBC02D', // Warning color
+  yellowLight: '#FFF9C4', // Light yellow
+  greyNormal: '#9E9E9E',
+  greyLight: '#E0E0E0',
+  greyDark: '#616161',
+  background: '#FCFCFC', // Added background for compatibility
+  tint: '#F28C28', // Added tint for compatibility
+  icon: '#687076', // Added icon for compatibility
+  tabIconDefault: '#687076', // Added tabIconDefault for compatibility
+  tabIconSelected: '#F28C28', // Added tabIconSelected for compatibility
 };
 
 export const Fonts = Platform.select({

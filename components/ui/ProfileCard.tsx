@@ -8,6 +8,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
+import { Colors } from "../../constants/theme";
 import FilterChip from "./FilterChip";
 import PrimaryButton from "./PrimaryButton";
 import StarRating from "./StarRating";
@@ -51,7 +52,7 @@ export default function ProfileCard({ user, style }: Props) {
         />
         {/* Distance badge */}
         <View style={styles.distanceBadge}>
-          <MaterialIcons name="location-on" size={14} color="#FFFFFF" />
+          <MaterialIcons name="location-on" size={14} color={Colors.white} />
           <Text style={styles.distanceText}>{user.distance}</Text>
         </View>
       </View>
@@ -102,10 +103,10 @@ const styles = StyleSheet.create({
   card: {
     width: "100%",
     borderRadius: BORDER_RADIUS,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.white,
     marginBottom: 16,
     overflow: "hidden",
-    shadowColor: "#000",
+    shadowColor: Colors.black,
     shadowOpacity: 0.06,
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 4 },
@@ -115,7 +116,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: IMAGE_HEIGHT,
     position: "relative",
-    backgroundColor: "#F3F4F6",
+    backgroundColor: Colors.greyLight,
   },
   image: {
     width: "100%",
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   distanceText: {
-    color: "#FFFFFF",
+    color: Colors.white,
     fontSize: 12,
     fontWeight: "600",
     letterSpacing: -0.2,
@@ -151,7 +152,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#111827",
+    color: Colors.text,
     letterSpacing: -0.4,
     marginBottom: 6,
   },

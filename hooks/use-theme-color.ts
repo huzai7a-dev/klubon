@@ -4,18 +4,18 @@
  */
 
 import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export function useThemeColor(
   props: { light?: string; dark?: string },
-  colorName: keyof typeof Colors.light & keyof typeof Colors.dark
+  colorName: keyof typeof Colors
 ) {
-  const theme = useColorScheme() ?? 'light';
-  const colorFromProps = props[theme];
-
-  if (colorFromProps) {
-    return colorFromProps;
-  } else {
-    return Colors[theme][colorName];
+  // We are now forcing light mode and using a flat color structure
+  // If a specific color is passed via props (though we should discourage this), return it.
+  // Otherwise return the color from our Colors constant.
+  
+  if (props.light) {
+    return props.light;
   }
+  
+  return Colors[colorName];
 }

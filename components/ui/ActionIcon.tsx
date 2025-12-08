@@ -1,6 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React from "react";
 import { StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
+import { Colors } from "../../constants/theme";
 
 interface Props {
   iconName: string;
@@ -28,7 +29,7 @@ export default function ActionIcon({
       <Ionicons
         name={iconName as any}
         size={20}
-        color={isPrimary ? "#fff" : "#2F80ED"}
+        color={isPrimary ? Colors.white : Colors.primary}
       />
     </TouchableOpacity>
   );
@@ -41,15 +42,15 @@ const styles = StyleSheet.create({
     borderRadius: 52,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
+    shadowColor: Colors.black,
     shadowOpacity: 0.12,
     shadowRadius: 8,
     elevation: 4,
   },
   default: {
-    backgroundColor: "#fff",
+    backgroundColor: Colors.white,
   },
   primary: {
-    backgroundColor: "#FF4D6D",
+    backgroundColor: Colors.primary,
   },
 });

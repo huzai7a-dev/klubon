@@ -1,14 +1,15 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
-    Image,
-    ImageStyle,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-    ViewStyle,
+  Image,
+  ImageStyle,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle,
 } from "react-native";
+import { Colors } from "../../constants/theme";
 
 export interface Notification {
   id: string;
@@ -30,10 +31,10 @@ const TYPE_ICON_MAP: Record<
   Notification["type"],
   { icon: keyof typeof MaterialIcons.glyphMap; color: string }
 > = {
-  message: { icon: "chat", color: "#4F46E5" }, // indigo
-  match: { icon: "favorite", color: "#EF4444" }, // red
-  review: { icon: "star", color: "#F59E0B" }, // amber
-  general: { icon: "notifications", color: "#10B981" }, // green
+  message: { icon: "chat", color: Colors.primary }, // indigo -> primary
+  match: { icon: "favorite", color: Colors.red }, // red
+  review: { icon: "star", color: Colors.yellow }, // amber
+  general: { icon: "notifications", color: Colors.green }, // green
 };
 
 function getNotificationVisuals(type: Notification["type"]) {
@@ -95,7 +96,7 @@ const NotificationItem: React.FC<Props> = ({
                 <MaterialIcons
                   name={visuals.icon}
                   size={14}
-                  color="#FFFFFF"
+                  color={Colors.white}
                 />
               </View>
             </View>
@@ -160,11 +161,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     padding: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.white,
     borderRadius: 16,
     marginVertical: 4,
     marginHorizontal: 16,
-    shadowColor: "#000",
+    shadowColor: Colors.black,
     shadowOffset: {
       width: 0,
       height: 1,
@@ -174,9 +175,9 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   unread: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.white,
     borderLeftWidth: 3,
-    borderLeftColor: "#4F46E5",
+    borderLeftColor: Colors.primary,
     shadowOpacity: 0.08,
     shadowRadius: 6,
     elevation: 3,
@@ -199,14 +200,14 @@ const styles = StyleSheet.create({
     height: AVATAR_SIZE,
     borderRadius: AVATAR_SIZE / 2,
     resizeMode: "cover",
-    backgroundColor: "#F3F4F6",
+    backgroundColor: Colors.greyLight,
   } as ImageStyle,
   imagePlaceholder: {
     position: "absolute",
     width: AVATAR_SIZE,
     height: AVATAR_SIZE,
     borderRadius: AVATAR_SIZE / 2,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: Colors.greyLight,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -217,7 +218,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
-    borderColor: "#E5E7EB",
+    borderColor: Colors.greyLight,
   },
   iconOverlay: {
     position: "absolute",
@@ -236,8 +237,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 3,
-    borderColor: "#FFFFFF",
-    shadowColor: "#000",
+    borderColor: Colors.white,
+    shadowColor: Colors.black,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -254,8 +255,8 @@ const styles = StyleSheet.create({
     height: 12,
     borderRadius: 6,
     borderWidth: 2.5,
-    borderColor: "#FFFFFF",
-    shadowColor: "#000",
+    borderColor: Colors.white,
+    shadowColor: Colors.black,
     shadowOpacity: 0.2,
     shadowRadius: 3,
     shadowOffset: { width: 0, height: 1 },
@@ -281,36 +282,36 @@ const styles = StyleSheet.create({
   sender: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#111827",
+    color: Colors.text,
     letterSpacing: -0.3,
   },
   newBadge: {
     marginLeft: 8,
     paddingHorizontal: 6,
     paddingVertical: 2,
-    backgroundColor: "#EF4444",
+    backgroundColor: Colors.red,
     borderRadius: 8,
   },
   newBadgeText: {
     fontSize: 10,
     fontWeight: "700",
-    color: "#FFFFFF",
+    color: Colors.white,
     letterSpacing: 0.2,
   },
   time: {
     fontSize: 12,
     fontWeight: "500",
-    color: "#9CA3AF",
+    color: Colors.greyNormal,
     letterSpacing: -0.2,
   },
   message: {
     fontSize: 14,
     lineHeight: 20,
-    color: "#6B7280",
+    color: Colors.greyDark,
     fontWeight: "400",
   },
   messageUnread: {
-    color: "#374151",
+    color: Colors.text,
     fontWeight: "500",
   },
 });

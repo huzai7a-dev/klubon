@@ -12,51 +12,51 @@ export default function TabLayout() {
     <View style={styles.container}>
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: Colors.light.tint,
+          tabBarActiveTintColor: Colors.primary,
           headerShown: false,
           tabBarButton: HapticTab,
           tabBarStyle: {
-            backgroundColor: "#ffffff",
-            borderColor: Colors.light.tint,
+            backgroundColor: Colors.white,
+            borderColor: Colors.primary,
           },
         }}
       >
-      <Tabs.Screen
-        name="discover"
-        options={{
-          title: "Discover",
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons size={28} name="explore" color={color} />
-          ),
-        }}
-      />
+        <Tabs.Screen
+          name="discover"
+          options={{
+            title: "Discover",
+            tabBarIcon: ({ color }) => (
+              <MaterialIcons size={28} name="explore" color={color} />
+            ),
+          }}
+        />
 
-      <Tabs.Screen
-        name="notification"
-        options={{
-          title: "Notifications",
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons size={28} name="notifications" color={color} />
-          ),
-        }}
-      />
+        <Tabs.Screen
+          name="notification"
+          options={{
+            title: "Notifications",
+            tabBarIcon: ({ color }) => (
+              <MaterialIcons size={28} name="notifications" color={color} />
+            ),
+          }}
+        />
 
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Profile",
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons size={28} name="person" color={color} />
-          ),
-        }}
-      />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: "Profile",
+            tabBarIcon: ({ color }) => (
+              <MaterialIcons size={28} name="person" color={color} />
+            ),
+          }}
+        />
 
-      <Tabs.Screen
-        name="profile/[id]"
-        options={{
-          href: null, // Hide from tab bar
-        }}
-      />
+        <Tabs.Screen
+          name="profile/[id]"
+          options={{
+            href: null, // Hide from tab bar
+          }}
+        />
       </Tabs>
     </View>
   );
@@ -65,6 +65,6 @@ export default function TabLayout() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF9F3",
+    backgroundColor: Colors.primaryLight,
   },
 });

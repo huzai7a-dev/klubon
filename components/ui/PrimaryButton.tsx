@@ -25,7 +25,7 @@ export default function PrimaryButton({
       style={[
         styles.btn,
         compact && styles.btnCompact,
-        { backgroundColor: disabled ? "#CFCFCF" : Colors.light.tint },
+        { backgroundColor: disabled ? Colors.greyLight : Colors.primary },
         style,
       ]}
     >
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 12,
-    shadowColor: Colors.light.tint,
+    shadowColor: Colors.primary,
     shadowOpacity: 0.2,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 4 },
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   title: {
-    color: "#fff",
+    color: Colors.white,
     fontWeight: "700",
     fontSize: 16,
   },

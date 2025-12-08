@@ -1,6 +1,7 @@
 import ActionIcon from "@/components/ui/ActionIcon";
 import FilterChip from "@/components/ui/FilterChip";
 import RatingSummary from "@/components/ui/RatingSummary";
+import { Colors } from "@/constants/theme";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
@@ -84,7 +85,7 @@ function ReviewItem({ review }: { review: typeof MOCK_REVIEWS[0] }) {
         key={i}
         name={i <= review.rating ? "star" : "star-border"}
         size={16}
-        color="#FFD700"
+        color={Colors.yellow}
         style={styles.reviewStar}
       />
     );
@@ -102,7 +103,7 @@ function ReviewItem({ review }: { review: typeof MOCK_REVIEWS[0] }) {
           />
         ) : (
           <View style={[styles.reviewerAvatar, styles.avatarPlaceholder]}>
-            <Ionicons name="person" size={24} color="#9CA3AF" />
+            <Ionicons name="person" size={24} color={Colors.greyNormal} />
           </View>
         )}
         <View style={styles.reviewerInfo}>
@@ -165,7 +166,7 @@ export default function ProfileDetailScreen() {
             onPress={handleBack}
             activeOpacity={0.8}
           >
-            <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
+            <Ionicons name="arrow-back" size={24} color={Colors.white} />
           </TouchableOpacity>
 
           {/* Information Overlay */}
@@ -273,7 +274,7 @@ export default function ProfileDetailScreen() {
                 <Ionicons
                   name={reviewsExpanded ? "chevron-up" : "chevron-down"}
                   size={16}
-                  color="#F28C28"
+                  color={Colors.primary}
                   style={styles.chevronIcon}
                 />
               </TouchableOpacity>
@@ -305,7 +306,7 @@ const HEADER_HEIGHT = 320;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF9F3",
+    backgroundColor: Colors.primaryLight,
   },
   scrollView: {
     flex: 1,
@@ -317,7 +318,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: HEADER_HEIGHT,
     position: "relative",
-    backgroundColor: "#F3F4F6",
+    backgroundColor: Colors.greyLight,
   },
   headerImage: {
     width: "100%",
@@ -364,7 +365,7 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 28,
     fontWeight: "800",
-    color: "#FFFFFF",
+    color: Colors.white,
     marginBottom: 6,
     letterSpacing: -0.5,
     textShadowColor: "rgba(0, 0, 0, 0.3)",
@@ -396,9 +397,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 18,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.white,
     borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
+    borderBottomColor: Colors.greyLight,
   },
   actionButtons: {
     flexDirection: "row",
@@ -412,7 +413,7 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 26,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.white,
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
@@ -436,7 +437,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#111827",
+    color: Colors.text,
     marginBottom: 16,
     letterSpacing: -0.4,
   },
@@ -446,7 +447,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   preferenceCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.white,
     borderRadius: 16,
     padding: 20,
     shadowColor: "#000",
@@ -466,7 +467,7 @@ const styles = StyleSheet.create({
   preferenceLabel: {
     fontSize: 15,
     fontWeight: "600",
-    color: "#374151",
+    color: Colors.greyDark,
     width: 100,
     marginTop: 2,
   },
@@ -476,7 +477,7 @@ const styles = StyleSheet.create({
   preferenceText: {
     fontSize: 15,
     fontWeight: "500",
-    color: "#111827",
+    color: Colors.text,
   },
   preferenceTags: {
     flexDirection: "row",
@@ -484,7 +485,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   timeTag: {
-    backgroundColor: "#F3F4F6",
+    backgroundColor: Colors.greyLight,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 12,
@@ -494,7 +495,7 @@ const styles = StyleSheet.create({
   timeTagText: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#374151",
+    color: Colors.greyDark,
   },
   reviewsHeader: {
     flexDirection: "row",
@@ -505,7 +506,7 @@ const styles = StyleSheet.create({
   reviewsSectionTitle: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#111827",
+    color: Colors.text,
     letterSpacing: -0.4,
     lineHeight: 24,
   },
@@ -517,14 +518,14 @@ const styles = StyleSheet.create({
   viewAllText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#F28C28",
+    color: Colors.primary,
     marginRight: 4,
   },
   chevronIcon: {
     marginLeft: 2,
   },
   reviewsCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.white,
     borderRadius: 16,
     padding: 20,
     marginBottom: 16,
@@ -538,7 +539,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   reviewItem: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.white,
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
@@ -558,13 +559,13 @@ const styles = StyleSheet.create({
     height: 44,
     borderRadius: 22,
     marginRight: 12,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: Colors.greyLight,
   },
   avatarPlaceholder: {
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: Colors.greyLight,
   },
   reviewerInfo: {
     flex: 1,
@@ -572,7 +573,7 @@ const styles = StyleSheet.create({
   reviewerName: {
     fontSize: 15,
     fontWeight: "600",
-    color: "#111827",
+    color: Colors.text,
     marginBottom: 4,
   },
   reviewRatingRow: {
@@ -589,12 +590,12 @@ const styles = StyleSheet.create({
   reviewTime: {
     fontSize: 12,
     fontWeight: "400",
-    color: "#6B7280",
+    color: Colors.greyDark,
   },
   reviewComment: {
     fontSize: 14,
     fontWeight: "400",
-    color: "#374151",
+    color: Colors.greyDark,
     lineHeight: 20,
   },
   reviewSeparator: {

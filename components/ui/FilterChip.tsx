@@ -48,17 +48,17 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   inactive: {
-    backgroundColor: "#F6F7F8",
-    borderColor: "#E6E9EE",
+    backgroundColor: Colors.greyLight,
+    borderColor: Colors.greyLight,
   },
   active: {
-    backgroundColor: Colors.light.light,
-    borderColor: Colors.light.tint,
+    backgroundColor: Colors.primaryLight,
+    borderColor: Colors.primary,
   },
   inactiveLabel: {
-    color: "#374151",
+    color: Colors.greyDark,
   },
   activeLabel: {
-    color: Colors.light.tint,
+    color: Colors.primary,
   },
 });

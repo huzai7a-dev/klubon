@@ -85,7 +85,7 @@ export default function AuthScreen() {
             <IconSymbol
               name={"house.fill" as any}
               size={40}
-              color={Colors.light.tint}
+              color={Colors.primary}
             />
           </Animated.View>
           <Text style={styles.title}>KLUBON</Text>
@@ -125,16 +125,16 @@ export default function AuthScreen() {
         </Animated.View>
 
         {/* Decorative footer to reduce empty bottom space */}
-        <View style={styles.footerWrap}>
+        {/* <View style={styles.footerWrap}>
           <View style={styles.footerDot} />
-        </View>
+        </View> */}
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: Colors.light.background },
+  flex: { flex: 1, backgroundColor: Colors.background },
   container: {
     paddingTop: Platform.OS === "ios" ? 92 : 82,
     paddingHorizontal: 20,
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     width: 84,
     height: 84,
     borderRadius: 22,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.white,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 14,
@@ -161,11 +161,11 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "900",
     letterSpacing: 0.6,
-    color: "#0B1220",
+    color: Colors.text,
   },
   subtitle: {
     marginTop: 6,
-    color: "#54606A",
+    color: Colors.greyDark,
     fontSize: 13,
   },
   card: {
@@ -173,8 +173,8 @@ const styles = StyleSheet.create({
     marginTop: 28,
     padding: 20,
     borderRadius: 18,
-    backgroundColor: "#fff",
-    shadowColor: "#0B1320",
+    backgroundColor: Colors.white,
+    shadowColor: Colors.text,
     shadowOpacity: 0.06,
     shadowRadius: 18,
     elevation: 6,
@@ -189,11 +189,11 @@ const styles = StyleSheet.create({
   line: {
     flex: 1,
     height: 1,
-    backgroundColor: "#EEF2F6",
+    backgroundColor: Colors.greyLight,
   },
   orText: {
     marginHorizontal: 12,
-    color: "#9AA0A6",
+    color: Colors.greyNormal,
     fontWeight: "600",
   },
   accentTop: {
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     width: 220,
     height: 220,
     borderRadius: 110,
-    backgroundColor: Colors.light.tint,
+    backgroundColor: Colors.primary,
     opacity: 0.12,
     transform: [{ rotate: "12deg" }],
   },
@@ -214,21 +214,8 @@ const styles = StyleSheet.create({
     width: 260,
     height: 260,
     borderRadius: 140,
-    backgroundColor: "#F28C28",
+    backgroundColor: Colors.primary,
     opacity: 0.06,
-  },
-  footerWrap: {
-    width: "100%",
-    alignItems: "center",
-    marginTop: 18,
-    paddingBottom: 18,
-  },
-  footerDot: {
-    width: 110,
-    height: 110,
-    borderRadius: 22,
-    backgroundColor: "#FFF6ED",
-    opacity: 0.9,
   },
   background: {
     position: "absolute",
@@ -236,6 +223,6 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
     height: Dimensions.get("window").height * 0.45,
-    backgroundColor: "#FFF9F3",
+    backgroundColor: Colors.primaryLight,
   },
 });

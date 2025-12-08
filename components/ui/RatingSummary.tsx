@@ -1,19 +1,20 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Colors } from "../../constants/theme";
 
 interface Props {
   averageRating: number; // 1-5
   reviewCount: number;
   onPress?: () => void;
-  align?:"vertical" | "horizontal"
+  align?: "vertical" | "horizontal"
 }
 
 export default function RatingSummary({
   averageRating,
   reviewCount,
   onPress,
-  align="vertical"
+  align = "vertical"
 }: Props) {
   const stars = [];
   const fullStars = Math.floor(averageRating);
@@ -26,7 +27,7 @@ export default function RatingSummary({
           key={i}
           name="star"
           size={24}
-          color="#FFD700"
+          color={Colors.yellow}
           style={styles.star}
         />
       );
@@ -36,7 +37,7 @@ export default function RatingSummary({
           key={i}
           name="star-half"
           size={24}
-          color="#FFD700"
+          color={Colors.yellow}
           style={styles.star}
         />
       );
@@ -46,7 +47,7 @@ export default function RatingSummary({
           key={i}
           name="star-border"
           size={24}
-          color="#FFD700"
+          color={Colors.yellow}
           style={styles.star}
         />
       );
@@ -57,7 +58,7 @@ export default function RatingSummary({
     <TouchableOpacity
       onPress={onPress || (() => console.log("Navigate to All Reviews"))}
       activeOpacity={0.7}
-      style={{...styles.container, flexDirection: align == "vertical" ? "column" : "row"}}
+      style={{ ...styles.container, flexDirection: align == "vertical" ? "column" : "row" }}
     >
       <View style={styles.starsContainer}>{stars}</View>
       <View style={styles.ratingInfo}>
@@ -94,13 +95,13 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#111827",
+    color: Colors.text,
     marginRight: 4,
   },
   reviewCountText: {
     fontSize: 13,
     fontWeight: "500",
-    color: "#6B7280",
+    color: Colors.greyDark,
   },
 });
 

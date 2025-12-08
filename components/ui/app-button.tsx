@@ -6,6 +6,10 @@ export default function PrimaryButton({
   title = "Sign In",
   onPress,
   disabled = false,
+}: {
+  title?: string;
+  onPress: () => void;
+  disabled?: boolean;
 }) {
   return (
     <TouchableOpacity
@@ -14,7 +18,7 @@ export default function PrimaryButton({
       disabled={disabled}
       style={[
         styles.btn,
-        { backgroundColor: disabled ? "#CFCFCF" : Colors.light.tint },
+        { backgroundColor: disabled ? Colors.greyLight : Colors.primary },
       ]}
     >
       <Text style={styles.title}>{title}</Text>
@@ -30,13 +34,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 12,
-    shadowColor: "#000",
+    shadowColor: Colors.black,
     shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 2,
   },
   title: {
-    color: "#fff",
+    color: Colors.white,
     fontWeight: "700",
     fontSize: 16,
   },

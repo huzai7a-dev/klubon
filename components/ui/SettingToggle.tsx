@@ -24,9 +24,9 @@ export default function SettingToggle({
       <Switch
         value={value}
         onValueChange={onToggle}
-        trackColor={{ false: "#E5E7EB", true: Colors.light.tint }}
-        thumbColor={"#FFFFFF"}
-        ios_backgroundColor="#E5E7EB"
+        trackColor={{ false: Colors.greyLight, true: Colors.primary }}
+        thumbColor={Colors.white}
+        ios_backgroundColor={Colors.greyLight}
       />
     </View>
   );
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
+    borderBottomColor: Colors.greyLight,
   },
   textContainer: {
     flex: 1,
@@ -48,11 +48,11 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "500",
-    color: "#1F2937",
+    color: Colors.text,
     marginBottom: 2,
   },
   description: {
     fontSize: 13,
-    color: "#6B7280",
+    color: Colors.greyDark,
   },
 });

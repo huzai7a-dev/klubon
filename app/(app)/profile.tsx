@@ -77,11 +77,11 @@ export default function MyProfileScreen() {
           <Image source={{ uri: USER_PROFILE.photoUrl }} style={styles.avatar} />
           <Text style={styles.name}>{USER_PROFILE.name}</Text>
           <Text style={styles.city}>{USER_PROFILE.city}</Text>
-          
+
           <TouchableOpacity onPress={handleEditProfile} style={styles.editButton}>
             <Text style={styles.editButtonText}>Edit Profile</Text>
           </TouchableOpacity>
-          
+
           <Text style={styles.bio}>{USER_PROFILE.bio}</Text>
         </View>
 
@@ -97,7 +97,7 @@ export default function MyProfileScreen() {
             onPress={handleViewRatings}
             align="horizontal"
           />
-          
+
         </View>
 
         <View style={styles.divider} />
@@ -107,7 +107,7 @@ export default function MyProfileScreen() {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>My Activities</Text>
             <TouchableOpacity onPress={handleAddActivity} style={styles.iconButton}>
-              <Ionicons name="add-circle-outline" size={24} color={Colors.light.tint} />
+              <Ionicons name="add-circle-outline" size={24} color={Colors.primary} />
             </TouchableOpacity>
           </View>
           <View style={styles.chipContainer}>
@@ -127,7 +127,7 @@ export default function MyProfileScreen() {
         {/* Preferences Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Play Style & Times</Text>
-          
+
           <View style={styles.preferenceRow}>
             <Text style={styles.preferenceLabel}>Play Style</Text>
             <View style={styles.toggleContainer}>
@@ -206,7 +206,7 @@ export default function MyProfileScreen() {
             <Text style={styles.logoutText}>Log Out</Text>
           </TouchableOpacity>
         </View>
-        
+
         {/* Bottom padding for scroll */}
         <View style={{ height: 40 }} />
       </ScrollView>
@@ -217,7 +217,7 @@ export default function MyProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF9F3",
+    backgroundColor: Colors.primaryLight,
   },
   scrollContent: {
     paddingBottom: 20,
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 24,
     paddingHorizontal: 20,
-    // backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.white,
   },
   avatar: {
     width: 100,
@@ -237,12 +237,12 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#111827",
+    color: Colors.text,
     marginBottom: 4,
   },
   city: {
     fontSize: 16,
-    color: "#6B7280",
+    color: Colors.greyDark,
     marginBottom: 12,
   },
   editButton: {
@@ -250,12 +250,12 @@ const styles = StyleSheet.create({
   },
   editButtonText: {
     fontSize: 16,
-    color: Colors.light.tint,
+    color: Colors.primary,
     fontWeight: "600",
   },
   bio: {
     fontSize: 14,
-    color: "#4B5563",
+    color: Colors.greyDark,
     textAlign: "center",
     lineHeight: 20,
     paddingHorizontal: 20,
@@ -265,21 +265,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 12,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.white,
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: "#F3F4F6",
+    borderColor: Colors.greyLight,
     gap: 12,
   },
   viewRatingsLink: {
     fontSize: 14,
-    color: Colors.light.tint,
+    color: Colors.primary,
     fontWeight: "500",
   },
   section: {
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.white,
   },
   sectionHeader: {
     flexDirection: "row",
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#111827",
+    color: Colors.text,
     marginBottom: 12,
   },
   iconButton: {
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 8,
-    // backgroundColor: "#F3F4F6",
+    backgroundColor: Colors.greyLight,
   },
   preferenceRow: {
     marginBottom: 20,
@@ -311,12 +311,12 @@ const styles = StyleSheet.create({
   preferenceLabel: {
     fontSize: 16,
     fontWeight: "500",
-    color: "#374151",
+    color: Colors.greyDark,
     marginBottom: 8,
   },
   toggleContainer: {
     flexDirection: "row",
-    backgroundColor: "#F3F4F6",
+    backgroundColor: Colors.greyLight,
     borderRadius: 8,
     padding: 4,
   },
@@ -327,8 +327,8 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   toggleOptionActive: {
-    backgroundColor: "#FFFFFF",
-    shadowColor: "#000",
+    backgroundColor: Colors.white,
+    shadowColor: Colors.black,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
@@ -337,10 +337,10 @@ const styles = StyleSheet.create({
   toggleText: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#6B7280",
+    color: Colors.greyDark,
   },
   toggleTextActive: {
-    color: "#111827",
+    color: Colors.text,
     fontWeight: "600",
   },
   inputContainer: {
@@ -349,29 +349,29 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 16,
     fontWeight: "500",
-    color: "#374151",
+    color: Colors.greyDark,
     marginBottom: 8,
   },
   textInput: {
     borderWidth: 1,
-    borderColor: "#D1D5DB",
+    borderColor: Colors.greyLight,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 16,
-    color: "#111827",
+    color: Colors.text,
   },
   logoutButton: {
     paddingVertical: 12,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FEE2E2",
+    backgroundColor: Colors.redLight,
     borderRadius: 8,
     marginTop: 8,
   },
   logoutText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#DC2626",
+    color: Colors.red,
   },
 });

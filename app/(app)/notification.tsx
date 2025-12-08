@@ -6,13 +6,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import NotificationItem, {
   Notification,
 } from "@/components/ui/NotificationItem";
+import { Colors } from "@/constants/theme";
 
 const COLORS = {
-  background: "#FFF9F3",
-  card: "#FFFFFF",
-  text: "#0B1220",
-  muted: "#6B7280",
-  tint: "#2563EB",
+  background: Colors.primaryLight,
+  card: Colors.white,
+  text: Colors.text,
+  muted: Colors.greyDark,
+  tint: Colors.primary,
 };
 
 const mockData: Notification[] = [
@@ -118,11 +119,11 @@ const styles = StyleSheet.create({
     bottom: 18,
     height: 64,
     borderRadius: 22,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.white,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    shadowColor: "#000",
+    shadowColor: Colors.black,
     shadowOpacity: 0.06,
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 6 },
