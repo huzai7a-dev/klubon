@@ -11,7 +11,6 @@ import {
   ViewStyle,
 } from "react-native";
 import { Colors } from "../../constants/theme";
-import PrimaryButton from "./PrimaryButton";
 
 interface User {
   id: string;
@@ -77,20 +76,21 @@ export default function ProfileCard({ user, style }: Props) {
             ))}
           </View>
 
+          <View>
+
+          </View>
           {/* Action Buttons */}
-          <View style={styles.actionRow}>
+          {/* <View style={styles.actionRow}>
             <PrimaryButton
               title="View Profile"
               onPress={handleViewProfile}
               style={{ flex: 1, marginVertical: 0 }}
             />
-          </View>
+          </View> */}
         </View>
       </BlurView>
 
-      {/* Invisible Touch Area to maintain card tap behavior if needed, 
-          but usually buttons handle actions. 
-          If the user wants the whole card to be tappable to view profile: */}
+
       <TouchableOpacity
         style={styles.touchableFill}
         onPress={handleViewProfile}
@@ -117,12 +117,7 @@ const styles = StyleSheet.create({
   },
   touchableFill: {
     ...StyleSheet.absoluteFillObject,
-    zIndex: -1, // Behind buttons but accessible if nothing else caught it? 
-    // Actually, on RN zIndex doesn't work well for "pass through". 
-    // Better to just let buttons be on top.
-    // If we want the background to be tappable, we'd wrap content. 
-    // For now, let's assume the buttons are the primary actions, 
-    // but typically tapping the face opens profile.
+    zIndex: 10, // Ensure it sits on top of everything now that buttons are gone
   },
   overlay: {
     position: "absolute",
@@ -131,7 +126,6 @@ const styles = StyleSheet.create({
     right: 0,
     padding: 15,
     paddingBottom: 24,
-    // Add a slight gradient-like background if blur isn't enough or for better contrast
     backgroundColor: "rgba(0,0,0,0.3)",
   },
   contentContainer: {

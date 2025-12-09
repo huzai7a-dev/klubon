@@ -143,6 +143,6 @@ const styles = StyleSheet.create({
     paddingRight: 8,
   },
   list: {
-    paddingBottom: 80,
+    paddingBottom: 130,
   },
 });

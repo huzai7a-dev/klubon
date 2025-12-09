@@ -208,7 +208,7 @@ export default function MyProfileScreen() {
         </View>
 
         {/* Bottom padding for scroll */}
-        <View style={{ height: 40 }} />
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -217,10 +217,10 @@ export default function MyProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: Colors.background,
   },
   scrollContent: {
-    paddingBottom: 20,
+    paddingBottom: 130,
   },
   header: {
     alignItems: "center",
