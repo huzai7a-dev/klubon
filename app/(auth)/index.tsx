@@ -1,6 +1,7 @@
 import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   Animated,
   Dimensions,
   Easing,
@@ -12,29 +13,53 @@ import {
   View,
 } from "react-native";
 
+import PrimaryButton from "@/components/ui/AppButton";
 import { IconSymbol } from "@/components/ui/IconSymbol";
-import PrimaryButton from "@/components/ui/PrimaryButton";
 import SocialSignInButton from "@/components/ui/SocialSignInButton";
 import TextInputField from "@/components/ui/TextInputField";
 import { Colors } from "@/constants/theme";
 import { useSession } from "@/contexts/AuthContext";
+import authService from "@/services/auth.service";
+
+enum LoginWith {
+  Email = "email",
+  Facebook = "facebook",
+  Google = "google",
+}
 
 export default function AuthScreen() {
-  const [identifier, setIdentifier] = useState<string>("");
-  const { signIn, profileCompleted } = useSession();
+  const [email, setEmail] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const { signIn } = useSession();
 
-  const mockLogin = () => {
-    signIn();
-    if (profileCompleted) {
-      router.replace("/discover");
+  const handleEmailLogin = async () => {
+    setLoading(true);
+    setError("");
+
+    const result = await authService.loginWithOtp(email);
+
+    setLoading(false);
+
+    if (result.success) {
+      // Navigate to OTP screen with email as param
+      router.push({
+        pathname: "/(auth)/enter-otp",
+        params: { email },
+      });
     } else {
-      router.replace("/setup-profile");
+      setError(result.error || "Failed to send OTP. Please try again.");
     }
   };
 
-  const isValid = Boolean(identifier && identifier.length > 3);
+  const mockLogin = (loginWith: LoginWith) => {
+    signIn();
+    router.replace("/(auth)/enter-otp");
+  };
 
-  // Entrance animations for a livelier UI
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const isValid = emailRegex.test(email);
+
   const logoScale = useRef(new Animated.Value(0.94)).current;
   const cardTranslate = useRef(new Animated.Value(22)).current;
   const cardOpacity = useRef(new Animated.Value(0)).current;
@@ -107,16 +132,27 @@ export default function AuthScreen() {
         >
           <TextInputField
             placeholder="Email or phone number"
-            value={identifier}
-            onChangeText={setIdentifier}
+            value={email}
+            onChangeText={(text) => {
+              setEmail(text);
+              setError(""); // Clear error when user types
+            }}
             keyboardType="email-address"
           />
 
+          {error ? (
+            <Text style={styles.errorText}>{error}</Text>
+          ) : null}
+
           <PrimaryButton
-            title="Sign In "
-            onPress={mockLogin}
-            disabled={!isValid}
+            title={loading ? "Sending..." : "Sign In"}
+            onPress={handleEmailLogin}
+            disabled={!isValid || loading}
           />
+
+          {loading && (
+            <ActivityIndicator size="small" color={Colors.primary} style={styles.loader} />
+          )}
 
           <View style={styles.separatorRow}>
             <View style={styles.line} />
@@ -124,14 +160,10 @@ export default function AuthScreen() {
             <View style={styles.line} />
           </View>
 
-          <SocialSignInButton provider="google" onPress={mockLogin} />
-          <SocialSignInButton provider="facebook" onPress={mockLogin} />
+          <SocialSignInButton provider="google" onPress={() => mockLogin(LoginWith.Google)} />
+          <SocialSignInButton provider="facebook" onPress={() => mockLogin(LoginWith.Facebook)} />
         </Animated.View>
 
-        {/* Decorative footer to reduce empty bottom space */}
-        {/* <View style={styles.footerWrap}>
-          <View style={styles.footerDot} />
-        </View> */}
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -180,8 +212,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     shadowColor: Colors.text,
     shadowOpacity: 0.06,
-    shadowRadius: 18,
-    elevation: 6,
+    shadowRadius: 6,
+    elevation: 4,
     borderWidth: 0.5,
     borderColor: "rgba(11,19,32,0.04)",
   },
@@ -199,6 +231,15 @@ const styles = StyleSheet.create({
     marginHorizontal: 12,
     color: Colors.greyNormal,
     fontWeight: "600",
+  },
+  errorText: {
+    color: Colors.red,
+    fontSize: 14,
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  loader: {
+    marginTop: 8,
   },
   accentTop: {
     position: "absolute",

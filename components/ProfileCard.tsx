@@ -10,7 +10,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { Colors } from "../../constants/theme";
+import { Colors } from "../constants/theme";
 
 interface User {
   id: string;
@@ -75,18 +75,6 @@ export default function ProfileCard({ user, style }: Props) {
               </View>
             ))}
           </View>
-
-          <View>
-
-          </View>
-          {/* Action Buttons */}
-          {/* <View style={styles.actionRow}>
-            <PrimaryButton
-              title="View Profile"
-              onPress={handleViewProfile}
-              style={{ flex: 1, marginVertical: 0 }}
-            />
-          </View> */}
         </View>
       </BlurView>
 

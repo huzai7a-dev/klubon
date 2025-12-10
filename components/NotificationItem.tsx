@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
@@ -9,7 +10,6 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { Colors } from "../../constants/theme";
 
 export interface Notification {
   id: string;

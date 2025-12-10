@@ -1,13 +1,11 @@
 import {
-  DarkTheme,
   DefaultTheme,
-  ThemeProvider,
+  ThemeProvider
 } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
 import { SessionProvider, useSession } from "@/contexts/AuthContext";
-import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Stack } from "expo-router";
 import React from "react";
 
@@ -16,11 +14,10 @@ export const unstable_settings = {
 };
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
 
   return (
     <SessionProvider>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <ThemeProvider value={DefaultTheme}>
         <StatusBar style="auto" />
         <RootNavigator />
       </ThemeProvider>

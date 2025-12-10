@@ -1,6 +1,6 @@
+import RatingSummary from "@/components/RatingSummary";
 import ActionIcon from "@/components/ui/ActionIcon";
 import FilterChip from "@/components/ui/FilterChip";
-import RatingSummary from "@/components/ui/RatingSummary";
 import { Colors } from "@/constants/theme";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";

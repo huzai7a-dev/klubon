@@ -1,6 +1,6 @@
+import { Colors } from "@/constants/theme";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, ViewStyle } from "react-native";
-import { Colors } from "../../constants/theme";
 
 interface Props {
   title?: string;
@@ -29,7 +29,7 @@ export default function PrimaryButton({
         style,
       ]}
     >
-      <Text style={[styles.title, compact && styles.titleCompact]}>
+      <Text style={[styles.title, compact && styles.titleCompact, { color: disabled ? Colors.greyNormal : Colors.white }]}>
         {title}
       </Text>
     </TouchableOpacity>

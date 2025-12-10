@@ -13,8 +13,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Colors } from "@/constants/theme";
 import { useSession } from "@/contexts/AuthContext";
+import RatingSummary from "../../components/RatingSummary";
 import FilterChip from "../../components/ui/FilterChip";
-import RatingSummary from "../../components/ui/RatingSummary";
 import SettingToggle from "../../components/ui/SettingToggle";
 
 // Mock Data

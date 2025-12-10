@@ -1,5 +1,5 @@
+import ProfileCard from "@/components/ProfileCard";
 import FilterChip from "@/components/ui/FilterChip";
-import ProfileCard from "@/components/ui/ProfileCard";
 import { Colors } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";

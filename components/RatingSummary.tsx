@@ -1,7 +1,7 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Colors } from "../../constants/theme";
+import { Colors } from "../constants/theme";
 
 interface Props {
   averageRating: number; // 1-5

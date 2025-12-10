@@ -1,7 +1,7 @@
+import { Colors } from "@/constants/theme";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, Text, View, ViewStyle } from "react-native";
-import { Colors } from "../../constants/theme";
 
 interface Props {
   rating: number; // current rating (e.g. 4.5)

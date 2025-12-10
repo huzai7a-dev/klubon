@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import NotificationItem, {
   Notification,
-} from "@/components/ui/NotificationItem";
+} from "@/components/NotificationItem";
 import { Colors } from "@/constants/theme";
 
 const COLORS = {
