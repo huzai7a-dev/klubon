@@ -1,20 +1,31 @@
-import { useStorageState } from "@/hooks/useStorageState";
-import { createContext, use, type PropsWithChildren } from "react";
+import { supabase } from "@/lib/supabase";
+import profileService from "@/services/profile.service";
+import { UserProfile } from "@/types";
+import { Session, User } from "@supabase/supabase-js";
+import { createContext, use, useEffect, useState, type PropsWithChildren } from "react";
 
-const AuthContext = createContext<{
-  signIn: () => void;
-  signOut: () => void;
-  session?: string | null;
+interface AuthContextType {
+  session: Session | null;
+  user: User | null;
+  profile: UserProfile | null;
   isLoading: boolean;
-  profileCompleted: boolean;
-  setProfileCompleted: (value: boolean) => void;
-}>({
-  signIn: () => null,
-  signOut: () => null,
+  isInitializing: boolean;
+  signIn: (session: Session) => Promise<void>;
+  signOut: () => Promise<void>;
+  loadProfile: () => Promise<void>;
+  updateProfileState: (profile: UserProfile) => void;
+}
+
+const AuthContext = createContext<AuthContextType>({
   session: null,
+  user: null,
+  profile: null,
   isLoading: false,
-  profileCompleted: false,
-  setProfileCompleted: () => null,
+  isInitializing: true,
+  signIn: async () => { },
+  signOut: async () => { },
+  loadProfile: async () => { },
+  updateProfileState: () => { },
 });
 
 // Use this hook to access the user info.
@@ -28,26 +39,124 @@ export function useSession() {
 }
 
 export function SessionProvider({ children }: PropsWithChildren) {
-  const [[isLoading, session], setSession] = useStorageState("session");
-  const [[isProfileLoading, profileCompleted], setProfileCompleted] = useStorageState("profileCompleted");
+  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
+
+  const loadProfile = async () => {
+    if (!user?.id) return;
+
+    try {
+      setIsLoading(true);
+      const profileData = await profileService.getUserProfile(user.id);
+      setProfile(profileData);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const signIn = async (newSession: Session) => {
+    setSession(newSession);
+    setUser(newSession.user);
+
+    if (newSession.user?.id) {
+      setIsLoading(true);
+      const profileData = await profileService.getUserProfile(newSession.user.id);
+      setProfile(profileData);
+      setIsLoading(false);
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      setIsLoading(true);
+      await supabase.auth.signOut();
+      setSession(null);
+      setUser(null);
+      setProfile(null);
+    } catch (error) {
+      console.error('Error signing out:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updateProfileState = (newProfile: UserProfile) => {
+    setProfile(newProfile);
+  };
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function initializeAuth() {
+      try {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+
+        if (!mounted) return;
+
+        if (currentSession) {
+          setSession(currentSession);
+          setUser(currentSession.user);
+
+          const profileData = await profileService.getUserProfile(currentSession.user.id);
+
+          if (!mounted) return;
+
+          setProfile(profileData);
+        }
+      } catch (error) {
+        console.error('Error initializing auth:', error);
+      } finally {
+        if (mounted) {
+          setIsInitializing(false);
+        }
+      }
+    }
+
+    initializeAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, newSession) => {
+        if (!mounted) return;
+
+        if (newSession) {
+          setSession(newSession);
+          setUser(newSession.user);
+
+          if (newSession.user?.id) {
+            const profileData = await profileService.getUserProfile(newSession.user.id);
+            if (mounted) {
+              setProfile(profileData);
+            }
+          }
+        } else {
+          setSession(null);
+          setUser(null);
+          setProfile(null);
+        }
+      }
+    );
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
 
   return (
     <AuthContext.Provider
       value={{
-        signIn: () => {
-          // Perform sign-in logic here
-          setSession("xxx");
-        },
-        signOut: () => {
-          setSession(null);
-          setProfileCompleted("false");
-        },
         session,
+        user,
+        profile,
         isLoading,
-        profileCompleted: profileCompleted === "true",
-        setProfileCompleted: (value: boolean) => {
-          setProfileCompleted(value ? "true" : "false");
-        },
+        isInitializing,
+        signIn,
+        signOut,
+        loadProfile,
+        updateProfileState,
       }}
     >
       {children}

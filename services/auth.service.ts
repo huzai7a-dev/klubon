@@ -17,7 +17,7 @@ class AuthService {
             const { data, error } = await supabase.auth.signInWithOtp({
                 email,
                 options: {
-                    shouldCreateUser: false,
+                    shouldCreateUser: true,
                 },
             })
 
@@ -54,13 +54,6 @@ class AuthService {
                 return {
                     success: false,
                     error: error.message || 'Invalid OTP. Please try again.',
-                };
-            }
-
-            if (!session) {
-                return {
-                    success: false,
-                    error: 'Failed to verify OTP. Please try again.',
                 };
             }
 

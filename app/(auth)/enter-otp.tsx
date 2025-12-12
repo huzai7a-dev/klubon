@@ -3,10 +3,13 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
-import PrimaryButton from '@/components/ui/AppButton';
+import AppButton from '@/components/ui/AppButton';
 import { AppText } from '@/components/ui/AppText';
 import { Colors } from '@/constants/theme';
+import { useSession } from '@/contexts/AuthContext';
+import { supabase } from '@/lib/supabase';
 import authService from '@/services/auth.service';
+import profileService from '@/services/profile.service';
 
 const OTP_LENGTH = 6;
 const RESEND_COOLDOWN = 60;
@@ -16,10 +19,10 @@ export default function EnterOtpScreen() {
     const [timer, setTimer] = useState(RESEND_COOLDOWN);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [success, setSuccess] = useState(false);
     const inputRef = useRef<TextInput>(null);
     const router = useRouter();
     const { email } = useLocalSearchParams<{ email: string }>();
+    const { signIn } = useSession();
 
     useEffect(() => {
         let interval: number;
@@ -55,19 +58,41 @@ export default function EnterOtpScreen() {
             return;
         }
 
-        setLoading(true);
-        setError('');
 
-        const result = await authService.verifyOtp(email, otp);
-
-        setLoading(false);
-
-        if (result.success) {
-            setSuccess(true);
+        try {
+            setLoading(true);
             setError('');
-        } else {
-            setError(result.error || 'Invalid OTP. Please try again.');
-            setOtp(''); // Clear OTP on error
+
+            const result = await authService.verifyOtp(email, otp);
+
+            if (result.success) {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session) {
+                    await signIn(session);
+
+                    const profileData = await profileService.getUserProfile(session.user.id);
+
+                    setLoading(false);
+
+                    if (profileData) {
+                        router.replace('/(app)/discover');
+                    } else {
+                        router.replace('/setup-profile');
+                    }
+                } else {
+                    setLoading(false);
+                    setError('Session not found. Please try again.');
+                }
+            } else {
+                setLoading(false);
+                setError(result.error || 'Invalid OTP. Please try again.');
+                setOtp('');
+            }
+        } catch (error: any) {
+            setLoading(false);
+            setError(error.message || 'An unexpected error occurred. Please try again.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -89,15 +114,10 @@ export default function EnterOtpScreen() {
                 style={styles.keyboardAvoidingView}
             >
                 <View style={styles.content}>
-                    <AppText type="title" style={styles.title}>
-                        {success ? 'OTP Verified!' : 'Enter Code'}
-                    </AppText>
+                    <AppText type="title" style={styles.title}>Enter Code</AppText>
                     <AppText style={styles.subtitle}>
-                        {success
-                            ? 'Your OTP is correct! Authentication successful.'
-                            : `We've sent an OTP code to ${email || 'your email'}. Please check your inbox and enter the code below.`
-                        }
-                    </AppText>
+                        {`We've sent an OTP code to ${email || 'your email'}. Please check your inbox and enter the code below.`}
+                    </AppText >
 
                     <View style={styles.otpContainer}>
                         {/* Hidden Input */}
@@ -140,13 +160,13 @@ export default function EnterOtpScreen() {
                         </TouchableOpacity>
                     </View>
 
-                    {error ? (
-                        <AppText style={styles.errorText}>{error}</AppText>
-                    ) : null}
+                    {
+                        error ? (
+                            <AppText style={styles.errorText}>{error}</AppText>
+                        ) : null
+                    }
 
-                    {success ? (
-                        <AppText style={styles.successText}>✓ OTP is correct!</AppText>
-                    ) : null}
+
 
                     <View style={styles.timerContainer}>
                         {timer > 0 ? (
@@ -162,15 +182,15 @@ export default function EnterOtpScreen() {
                         )}
                     </View>
 
-                    <PrimaryButton
+                    <AppButton
                         title="Verify"
                         onPress={handleVerify}
-                        disabled={otp.length !== OTP_LENGTH}
+                        disabled={otp.length !== OTP_LENGTH || loading}
                         style={styles.verifyButton}
                     />
-                </View>
-            </KeyboardAvoidingView>
-        </View>
+                </View >
+            </KeyboardAvoidingView >
+        </View >
     );
 }
 

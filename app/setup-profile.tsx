@@ -12,14 +12,14 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import PrimaryButton from "@/components/ui/PrimaryButton";
+import AppButton from "@/components/ui/AppButton";
 import TextInputField from "@/components/ui/TextInputField";
 import { Colors } from "@/constants/theme";
 import { useSession } from "@/contexts/AuthContext";
 
 export default function SetupProfileScreen() {
     const router = useRouter();
-    const { setProfileCompleted } = useSession();
+    const { user, updateProfileState } = useSession();
 
     const [name, setName] = useState("");
     const [age, setAge] = useState("");
@@ -28,8 +28,10 @@ export default function SetupProfileScreen() {
 
     const isValid = name.length > 2 && age.length > 0 && location.length > 2;
 
-    const handleComplete = () => {
-        setProfileCompleted(true);
+    const handleComplete = async () => {
+        // TODO: Save profile to database
+        // For now, just navigate
+        // After implementing, use updateProfileState to update the context
         router.replace("/discover");
     };
 
@@ -88,7 +90,7 @@ export default function SetupProfileScreen() {
 
                     <View style={styles.spacer} />
 
-                    <PrimaryButton
+                    <AppButton
                         title="Complete Setup"
                         onPress={handleComplete}
                         disabled={!isValid}

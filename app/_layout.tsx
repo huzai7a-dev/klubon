@@ -26,15 +26,15 @@ export default function RootLayout() {
 }
 
 function RootNavigator() {
-  const { session } = useSession();
+  const { session, profile } = useSession();
 
   return (
     <Stack>
-      <Stack.Protected guard={!session}>
+      <Stack.Protected guard={!session || !profile}>
         <Stack.Screen name="(auth)/index" options={{ headerShown: false }} />
       </Stack.Protected>
 
-      <Stack.Protected guard={!!session}>
+      <Stack.Protected guard={!!session && !!profile}>
         <Stack.Screen name="(app)" options={{ headerShown: false }} />
         <Stack.Screen name="setup-profile" options={{ headerShown: false }} />
         <Stack.Screen name="chat/[id]" options={{ headerShown: false }} />

@@ -13,7 +13,7 @@ import {
   View,
 } from "react-native";
 
-import PrimaryButton from "@/components/ui/AppButton";
+import AppButton from "@/components/ui/AppButton";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import SocialSignInButton from "@/components/ui/SocialSignInButton";
 import TextInputField from "@/components/ui/TextInputField";
@@ -50,11 +50,6 @@ export default function AuthScreen() {
     } else {
       setError(result.error || "Failed to send OTP. Please try again.");
     }
-  };
-
-  const mockLogin = (loginWith: LoginWith) => {
-    signIn();
-    router.replace("/(auth)/enter-otp");
   };
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -144,7 +139,7 @@ export default function AuthScreen() {
             <Text style={styles.errorText}>{error}</Text>
           ) : null}
 
-          <PrimaryButton
+          <AppButton
             title={loading ? "Sending..." : "Sign In"}
             onPress={handleEmailLogin}
             disabled={!isValid || loading}
@@ -160,8 +155,9 @@ export default function AuthScreen() {
             <View style={styles.line} />
           </View>
 
-          <SocialSignInButton provider="google" onPress={() => mockLogin(LoginWith.Google)} />
-          <SocialSignInButton provider="facebook" onPress={() => mockLogin(LoginWith.Facebook)} />
+          {/* TODO: Implement OAuth login */}
+          <SocialSignInButton provider="google" onPress={() => { }} />
+          <SocialSignInButton provider="facebook" onPress={() => { }} />
         </Animated.View>
 
       </ScrollView>
