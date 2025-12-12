@@ -6,11 +6,15 @@ const AuthContext = createContext<{
   signOut: () => void;
   session?: string | null;
   isLoading: boolean;
+  profileCompleted: boolean;
+  setProfileCompleted: (value: boolean) => void;
 }>({
   signIn: () => null,
   signOut: () => null,
   session: null,
   isLoading: false,
+  profileCompleted: false,
+  setProfileCompleted: () => null,
 });
 
 // Use this hook to access the user info.
@@ -25,6 +29,7 @@ export function useSession() {
 
 export function SessionProvider({ children }: PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState("session");
+  const [[isProfileLoading, profileCompleted], setProfileCompleted] = useStorageState("profileCompleted");
 
   return (
     <AuthContext.Provider
@@ -35,9 +40,14 @@ export function SessionProvider({ children }: PropsWithChildren) {
         },
         signOut: () => {
           setSession(null);
+          setProfileCompleted("false");
         },
         session,
         isLoading,
+        profileCompleted: profileCompleted === "true",
+        setProfileCompleted: (value: boolean) => {
+          setProfileCompleted(value ? "true" : "false");
+        },
       }}
     >
       {children}

@@ -21,11 +21,15 @@ import { useSession } from "@/contexts/AuthContext";
 
 export default function AuthScreen() {
   const [identifier, setIdentifier] = useState<string>("");
-  const { signIn } = useSession();
+  const { signIn, profileCompleted } = useSession();
 
   const mockLogin = () => {
     signIn();
-    router.replace("/discover");
+    if (profileCompleted) {
+      router.replace("/discover");
+    } else {
+      router.replace("/setup-profile");
+    }
   };
 
   const isValid = Boolean(identifier && identifier.length > 3);

@@ -9,7 +9,7 @@ import NotificationItem, {
 import { Colors } from "@/constants/theme";
 
 const COLORS = {
-  background: Colors.primaryLight,
+  background: Colors.background,
   card: Colors.white,
   text: Colors.text,
   muted: Colors.greyDark,
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   list: {
-    paddingBottom: 100,
+    paddingBottom: 130,
     paddingTop: 12,
   },
   tabBar: {

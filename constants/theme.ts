@@ -23,6 +23,7 @@ export const Colors = {
   greyNormal: '#9E9E9E',
   greyLight: '#E0E0E0',
   greyDark: '#616161',
+  greyNeutral: '#0B1220',
   background: '#FCFCFC', // Added background for compatibility
   tint: '#F28C28', // Added tint for compatibility
   icon: '#687076', // Added icon for compatibility
