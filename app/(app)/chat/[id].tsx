@@ -1,11 +1,11 @@
 import { Colors } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     FlatList,
     Image,
-    KeyboardAvoidingView,
+    Keyboard,
     Platform,
     StyleSheet,
     Text,
@@ -54,7 +54,28 @@ export default function ChatDetailScreen() {
     const { id } = useLocalSearchParams();
     const [messages, setMessages] = useState(MOCK_MESSAGES);
     const [inputText, setInputText] = useState("");
+    const [keyboardHeight, setKeyboardHeight] = useState(0);
     const insets = useSafeAreaInsets();
+
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+            Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+            (e) => {
+                setKeyboardHeight(e.endCoordinates.height);
+            }
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+            Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+            () => {
+                setKeyboardHeight(0);
+            }
+        );
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, []);
 
     const handleSend = () => {
         if (inputText.trim()) {
@@ -71,43 +92,37 @@ export default function ChatDetailScreen() {
         }
     };
 
-    const inputBottomPadding = Math.max(insets.bottom, 8);
-
     return (
         <SafeAreaView style={styles.container} edges={["top"]}>
-            <KeyboardAvoidingView
-                style={{ flex: 1 }}
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
-            >
-                {/* Header */}
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={() => router.replace("/chats")} style={styles.backButton}>
-                        <Ionicons name="chevron-back" size={28} color={Colors.text} />
-                    </TouchableOpacity>
+            {/* Header */}
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => router.replace("/chats")} style={styles.backButton}>
+                    <Ionicons name="chevron-back" size={28} color={Colors.text} />
+                </TouchableOpacity>
 
-                    <Image
-                        source={{ uri: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=100&q=80" }}
-                        style={styles.avatar}
-                    />
-                    <View style={styles.headerInfo}>
-                        <Text style={styles.headerName}>Alex Carter</Text>
-                        <Text style={styles.headerStatus}>Online</Text>
-                    </View>
-
-                    <TouchableOpacity style={styles.headerAction}>
-                        <Ionicons name="ellipsis-vertical" size={24} color={Colors.text} />
-                    </TouchableOpacity>
+                <Image
+                    source={{ uri: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=100&q=80" }}
+                    style={styles.avatar}
+                />
+                <View style={styles.headerInfo}>
+                    <Text style={styles.headerName}>Alex Carter</Text>
+                    <Text style={styles.headerStatus}>Online</Text>
                 </View>
 
+                <TouchableOpacity style={styles.headerAction}>
+                    <Ionicons name="ellipsis-vertical" size={24} color={Colors.text} />
+                </TouchableOpacity>
+            </View>
+
+            <View style={{ flex: 1 }}>
                 {/* Messages List */}
                 <FlatList
                     data={messages}
                     keyExtractor={(item) => item.id}
                     contentContainerStyle={[
                         styles.messageList,
-                        { paddingBottom: styles.messageList.paddingBottom + inputBottomPadding },
+                        { paddingBottom: keyboardHeight > 0 ? keyboardHeight + 100 : 100 }
                     ]}
-                    inverted={false} // Ensure normal order, or true if bottom-up
                     renderItem={({ item }) => (
                         <View
                             style={[
@@ -136,7 +151,10 @@ export default function ChatDetailScreen() {
                 />
 
                 {/* Input Area */}
-                <View style={[styles.inputContainer, { paddingBottom: inputBottomPadding }]}>
+                <View style={[
+                    styles.inputContainer,
+                    { bottom: keyboardHeight }
+                ]}>
                     <TextInput
                         style={styles.input}
                         placeholder="Type a message..."
@@ -148,7 +166,7 @@ export default function ChatDetailScreen() {
                         <Ionicons name="send" size={20} color={Colors.white} />
                     </TouchableOpacity>
                 </View>
-            </KeyboardAvoidingView>
+            </View>
         </SafeAreaView>
     );
 }
@@ -194,10 +212,8 @@ const styles = StyleSheet.create({
         padding: 4,
     },
     messageList: {
-        flex: 1,
         paddingHorizontal: 16,
         paddingVertical: 20,
-        paddingBottom: 40,
     },
     messageBubble: {
         maxWidth: "80%",
@@ -247,12 +263,17 @@ const styles = StyleSheet.create({
         color: "rgba(255,255,255,0.7)",
     },
     inputContainer: {
+        position: "absolute",
+        left: 0,
+        right: 0,
+        bottom: 5,
         flexDirection: "row",
         alignItems: "center",
-        padding: 16,
-        // paddingBottom handled inline
+        paddingHorizontal: 16,
+        paddingTop: 12,
+        paddingBottom: 30,
         backgroundColor: Colors.white,
-        borderTopWidth: 1,
+        //borderTopWidth: 1,
         borderTopColor: Colors.greyLight,
     },
     input: {
