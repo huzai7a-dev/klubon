@@ -39,6 +39,8 @@ function RootNavigator() {
 
       <Stack.Protected guard={!!session}>
         <Stack.Screen name="(app)" options={{ headerShown: false }} />
+        <Stack.Screen name="setup-profile" options={{ headerShown: false }} />
+        <Stack.Screen name="chat/[id]" options={{ headerShown: false }} />
       </Stack.Protected>
     </Stack>
   );

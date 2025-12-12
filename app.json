@@ -20,7 +20,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.huzaifa7.klubon"
+      "package": "com.huzaifa7.klubon",
+      "windowSoftInputMode": "adjustResize"
     },
     "web": {
       "output": "static",

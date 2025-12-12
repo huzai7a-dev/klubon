@@ -3,7 +3,7 @@ import ProfileCard from "@/components/ui/ProfileCard";
 import { Colors } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
-import { FlatList, Platform, StyleSheet, Text, View } from "react-native";
+import { FlatList, Image, Platform, StyleSheet, Text, View } from "react-native";
 
 const MOCK_USERS = [
   {
@@ -80,6 +80,10 @@ export default function DiscoverScreen() {
   return (
     <View style={styles.screen}>
       <View style={styles.header}>
+        <Image
+          source={require("../../assets/images/logo-black.png")}
+          style={styles.logo}
+        />
         <Text style={styles.headerTitle}>KLUBON</Text>
         <Ionicons name="options-outline" size={22} color={Colors.text} />
       </View>
@@ -132,6 +136,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "900",
     color: Colors.text,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
   },
   filterBarWrap: {
     height: 56,
@@ -144,5 +151,9 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingBottom: 130,
+  },
+  logo: {
+    width: 35,
+    height: 35,
   },
 });

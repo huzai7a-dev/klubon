@@ -13,6 +13,7 @@ export default function TabLayout() {
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: Colors.primary,
+          tabBarInactiveTintColor: Colors.greyNeutral,
           headerShown: false,
           tabBarButton: HapticTab,
           tabBarStyle: {
@@ -23,7 +24,7 @@ export default function TabLayout() {
             borderRadius: 25,
             borderWidth: 0,
             borderColor: Colors.greyLight,
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.primaryLight,
             shadowColor: Colors.black,
             shadowOpacity: 0.25,
             shadowRadius: 15,
@@ -84,6 +85,13 @@ export default function TabLayout() {
           name="profile/[id]"
           options={{
             href: null, // Hide from tab bar
+          }}
+        />
+        <Tabs.Screen
+          name="chat/[id]"
+          options={{
+            href: null,
+            tabBarStyle: { display: "none" }, // Hide tab bar on chat detail
           }}
         />
       </Tabs>

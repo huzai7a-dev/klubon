@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: 15,
-    paddingBottom: 24,
+    paddingBottom: 0,
     backgroundColor: "rgba(0,0,0,0.3)",
   },
   contentContainer: {

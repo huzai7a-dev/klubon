@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React from "react";
 import {
     FlatList,
@@ -67,8 +68,14 @@ const CHAT_DATA = [
 ];
 
 export default function ChatScreen() {
+    const router = useRouter();
+
     const renderItem = ({ item }: { item: typeof CHAT_DATA[0] }) => (
-        <TouchableOpacity style={styles.chatItem} activeOpacity={0.7}>
+        <TouchableOpacity
+            style={styles.chatItem}
+            activeOpacity={0.7}
+            onPress={() => router.push(`/chat/${item.id}` as any)}
+        >
             <Image source={{ uri: item.photoUrl }} style={styles.avatar} />
             <View style={styles.chatInfo}>
                 <View style={styles.chatHeader}>
