@@ -18,6 +18,7 @@ export interface UserProfile {
   created_at?: string;
   user_activities?: {
     id: string;
+    user_id: string;
     activity_id: string;
     number_of_players?: number;
     activities: {

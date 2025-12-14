@@ -1,5 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
@@ -125,16 +124,6 @@ export default function EnterOtpScreen() {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ headerShown: false }} />
-
-      {/* Back Button */}
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => router.back()}
-        activeOpacity={0.7}
-      >
-        <Ionicons name="arrow-back" size={24} color={Colors.text} />
-      </TouchableOpacity>
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -145,13 +134,12 @@ export default function EnterOtpScreen() {
             Enter Code
           </AppText>
           <AppText style={styles.subtitle}>
-            {`We've sent an OTP code to ${
-              email || "your email"
-            }. Please check your inbox and enter the code below.`}
+            {`We've sent an OTP code to ${email || "your email"
+              }. Please check your inbox and enter the code below.`}
           </AppText>
 
           <View style={styles.otpContainer}>
-            {/* Hidden Input */}
+            {/* Hidden Input Overlay */}
             <TextInput
               ref={inputRef}
               style={styles.hiddenInput}
@@ -170,11 +158,7 @@ export default function EnterOtpScreen() {
             />
 
             {/* Visual Output */}
-            <TouchableOpacity
-              style={styles.otpInputGroup}
-              activeOpacity={1}
-              onPress={() => inputRef.current?.focus()}
-            >
+            <View style={styles.otpInputGroup}>
               {Array.from({ length: OTP_LENGTH }).map((_, index) => (
                 <View
                   key={index}
@@ -195,7 +179,7 @@ export default function EnterOtpScreen() {
                   </AppText>
                 </View>
               ))}
-            </TouchableOpacity>
+            </View>
           </View>
 
           {error ? <AppText style={styles.errorText}>{error}</AppText> : null}
@@ -283,9 +267,10 @@ const styles = StyleSheet.create({
   },
   hiddenInput: {
     position: "absolute",
-    opacity: 0.01, // Slightly visible for better focus behavior on physical devices
-    width: 1,
-    height: 1,
+    width: "100%",
+    height: "100%",
+    opacity: 0.01, // Keep slightly above 0 for some Android versions
+    zIndex: 10,
   },
   otpInputGroup: {
     flexDirection: "row",

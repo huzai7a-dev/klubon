@@ -30,10 +30,13 @@ export default function RootLayout() {
 }
 
 function RootNavigator() {
-  const { session, profile } = useSession();
+  const { session, profile, isInitializing, isLoading } = useSession();
 
   return (
     <Stack>
+      <Stack.Protected guard={isInitializing || isLoading}>
+        <Stack.Screen name="(auth)/loader" options={{ headerShown: false }} />
+      </Stack.Protected>
       <Stack.Protected guard={!session && !profile}>
         <Stack.Screen name="(auth)/index" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)/enter-otp" options={{ headerShown: false }} />

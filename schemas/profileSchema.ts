@@ -21,7 +21,7 @@ export const personalInfoSchema = z.object({
     .number()
     .min(5, "Distance must be at least 5 km")
     .max(200, "Distance must not exceed 200 km"),
-  avatar_uri: z.string().optional().or(z.literal("")),
+  avatar_uri: z.string().min(1, "Profile image is required"),
 });
 
 export type PersonalInfoFormData = z.infer<typeof personalInfoSchema>;

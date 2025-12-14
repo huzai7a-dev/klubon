@@ -29,10 +29,10 @@ const AuthContext = createContext<AuthContextType>({
   profile: null,
   isLoading: false,
   isInitializing: true,
-  signIn: async () => {},
-  signOut: async () => {},
-  loadProfile: async () => {},
-  updateProfileState: () => {},
+  signIn: async () => { },
+  signOut: async () => { },
+  loadProfile: async () => { },
+  updateProfileState: () => { },
 });
 
 // Use this hook to access the user info.
@@ -60,7 +60,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
       const profileData = await profileService.getUserProfile(user.id);
       setProfile(profileData);
     } catch (error) {
-      router.replace("/(auth)/login");
+      router.replace("/(auth)");
     } finally {
       setIsLoading(false);
     }

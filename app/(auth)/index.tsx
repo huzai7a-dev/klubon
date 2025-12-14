@@ -4,6 +4,7 @@ import {
   Animated,
   Dimensions,
   Easing,
+  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -13,7 +14,6 @@ import {
 } from "react-native";
 
 import AppButton from "@/components/ui/AppButton";
-import { IconSymbol } from "@/components/ui/IconSymbol";
 import SocialSignInButton from "@/components/ui/SocialSignInButton";
 import TextInputField from "@/components/ui/TextInputField";
 import { Colors } from "@/constants/theme";
@@ -118,10 +118,14 @@ export default function AuthScreen() {
           <Animated.View
             style={[styles.logo, { transform: [{ scale: logoScale }] }]}
           >
-            <IconSymbol
+            {/* <IconSymbol
               name={"house.fill" as any}
               size={40}
               color={Colors.primary}
+            /> */}
+            <Image
+              source={require("../../assets/images/icon.png")}
+              style={styles.logo}
             />
           </Animated.View>
           <Text style={styles.title}>KLUBON</Text>
@@ -164,7 +168,7 @@ export default function AuthScreen() {
 
           {/* TODO: Implement OAuth login */}
           <SocialSignInButton provider="google" onPress={handleGoogleLogin} />
-          <SocialSignInButton provider="facebook" onPress={() => {}} />
+          <SocialSignInButton provider="facebook" onPress={() => { }} />
         </Animated.View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -189,11 +193,9 @@ const styles = StyleSheet.create({
   logo: {
     width: 84,
     height: 84,
-    borderRadius: 22,
-    backgroundColor: Colors.white,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 14,
+    marginBottom: 4,
   },
   title: {
     fontSize: 30,

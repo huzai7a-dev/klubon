@@ -147,12 +147,11 @@ export default function SetupProfileScreen() {
     setIsSubmitting(true);
     try {
       const flatData = methods.getValues();
-      console.log("Submitting Profile data:", flatData);
 
       const profile = await profileService.createProfile(user.id, flatData);
 
       if (profile) {
-        // Update the context so the root layout knows we now have a profile
+
         updateProfileState(profile);
 
         Alert.alert(
@@ -232,8 +231,8 @@ export default function SetupProfileScreen() {
                 isSubmitting
                   ? "Creating..."
                   : currentStep === PROFILE_STEPS.length - 1
-                  ? "Complete"
-                  : "Next"
+                    ? "Complete"
+                    : "Next"
               }
               onPress={handleNext}
               disabled={!isCurrentStepValid() || isSubmitting}

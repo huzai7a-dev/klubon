@@ -69,7 +69,6 @@ export default function MyProfileScreen() {
     console.log(`Toggled ${key}`);
   };
 
-  console.log("Rendering MyProfileScreen with profile:", profile);
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -120,7 +119,7 @@ export default function MyProfileScreen() {
             {profile?.user_activities?.map((activity) => (
               <FilterChip
                 key={activity.id}
-                label={activity.activities.name}
+                label={activity?.activities?.name}
                 isActive={true}
                 onPress={() => handleRemoveActivity(activity.id)}
               />
@@ -187,18 +186,18 @@ export default function MyProfileScreen() {
           <SettingToggle
             label="Hide Precise Distance"
             description="Show approximate location only"
-            value={privacySettings.hideDistance}
+            value={profile?.hide_precise_distance || false}
             onToggle={() => togglePrivacy("hideDistance")}
           />
           <SettingToggle
             label="Hide Last Active"
-            value={privacySettings.hideLastActive}
+            value={profile?.hide_last_active || false}
             onToggle={() => togglePrivacy("hideLastActive")}
           />
           <SettingToggle
             label="Private Profile"
             description="Only friends can message you"
-            value={privacySettings.privateProfile}
+            value={profile?.private_profile || false}
             onToggle={() => togglePrivacy("privateProfile")}
           />
         </View>
