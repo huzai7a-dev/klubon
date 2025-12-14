@@ -51,6 +51,19 @@ export default function AuthScreen() {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    setError("");
+    const result = await authService.signInWithGoogle();
+
+    if (result.success && result.session) {
+      console.log("Google login successful");
+    } else {
+      setError(result.error || "Google sign in failed");
+    }
+    setLoading(false);
+  };
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const isValid = emailRegex.test(email);
 
@@ -150,7 +163,7 @@ export default function AuthScreen() {
           </View>
 
           {/* TODO: Implement OAuth login */}
-          <SocialSignInButton provider="google" onPress={() => {}} />
+          <SocialSignInButton provider="google" onPress={handleGoogleLogin} />
           <SocialSignInButton provider="facebook" onPress={() => {}} />
         </Animated.View>
       </ScrollView>

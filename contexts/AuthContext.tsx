@@ -2,7 +2,14 @@ import { supabase } from "@/lib/supabase";
 import profileService from "@/services/profile.service";
 import { UserProfile } from "@/types";
 import { Session, User } from "@supabase/supabase-js";
-import { createContext, use, useEffect, useState, type PropsWithChildren } from "react";
+import { router } from "expo-router";
+import {
+  createContext,
+  use,
+  useEffect,
+  useState,
+  type PropsWithChildren,
+} from "react";
 
 interface AuthContextType {
   session: Session | null;
@@ -22,10 +29,10 @@ const AuthContext = createContext<AuthContextType>({
   profile: null,
   isLoading: false,
   isInitializing: true,
-  signIn: async () => { },
-  signOut: async () => { },
-  loadProfile: async () => { },
-  updateProfileState: () => { },
+  signIn: async () => {},
+  signOut: async () => {},
+  loadProfile: async () => {},
+  updateProfileState: () => {},
 });
 
 // Use this hook to access the user info.
@@ -52,6 +59,8 @@ export function SessionProvider({ children }: PropsWithChildren) {
       setIsLoading(true);
       const profileData = await profileService.getUserProfile(user.id);
       setProfile(profileData);
+    } catch (error) {
+      router.replace("/(auth)/login");
     } finally {
       setIsLoading(false);
     }
@@ -63,7 +72,9 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
     if (newSession.user?.id) {
       setIsLoading(true);
-      const profileData = await profileService.getUserProfile(newSession.user.id);
+      const profileData = await profileService.getUserProfile(
+        newSession.user.id
+      );
       setProfile(profileData);
       setIsLoading(false);
     }
@@ -77,7 +88,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
       setUser(null);
       setProfile(null);
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.error("Error signing out:", error);
     } finally {
       setIsLoading(false);
     }
@@ -92,7 +103,9 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
     async function initializeAuth() {
       try {
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        const {
+          data: { session: currentSession },
+        } = await supabase.auth.getSession();
 
         if (!mounted) return;
 
@@ -100,14 +113,16 @@ export function SessionProvider({ children }: PropsWithChildren) {
           setSession(currentSession);
           setUser(currentSession.user);
 
-          const profileData = await profileService.getUserProfile(currentSession.user.id);
+          const profileData = await profileService.getUserProfile(
+            currentSession.user.id
+          );
 
           if (!mounted) return;
 
           setProfile(profileData);
         }
       } catch (error) {
-        console.error('Error initializing auth:', error);
+        console.error("Error initializing auth:", error);
       } finally {
         if (mounted) {
           setIsInitializing(false);
@@ -117,27 +132,29 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
     initializeAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, newSession) => {
-        if (!mounted) return;
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, newSession) => {
+      if (!mounted) return;
 
-        if (newSession) {
-          setSession(newSession);
-          setUser(newSession.user);
+      if (newSession) {
+        setSession(newSession);
+        setUser(newSession.user);
 
-          if (newSession.user?.id) {
-            const profileData = await profileService.getUserProfile(newSession.user.id);
-            if (mounted) {
-              setProfile(profileData);
-            }
+        if (newSession.user?.id) {
+          const profileData = await profileService.getUserProfile(
+            newSession.user.id
+          );
+          if (mounted) {
+            setProfile(profileData);
           }
-        } else {
-          setSession(null);
-          setUser(null);
-          setProfile(null);
         }
+      } else {
+        setSession(null);
+        setUser(null);
+        setProfile(null);
       }
-    );
+    });
 
     return () => {
       mounted = false;
