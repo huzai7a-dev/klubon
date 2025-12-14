@@ -7,7 +7,17 @@ class ProfileService {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("*")
+        .select(
+                    `
+              *,
+              user_activities (
+                id,
+                number_of_players,
+                activity_id,
+                activities (*)
+              )
+            `
+        )
         .eq("id", userId)
         .single();
 

@@ -117,10 +117,10 @@ export default function MyProfileScreen() {
             </TouchableOpacity>
           </View>
           <View style={styles.chipContainer}>
-            {activities.map((activity) => (
+            {profile?.user_activities?.map((activity) => (
               <FilterChip
                 key={activity.id}
-                label={activity.label}
+                label={activity.activities.name}
                 isActive={true}
                 onPress={() => handleRemoveActivity(activity.id)}
               />
