@@ -1,3 +1,5 @@
+import { Activity } from "@/components/ui/ActivityChip";
+
 export interface UserProfile {
     id: string;
     name: string;
@@ -14,4 +16,21 @@ export interface UserProfile {
     private_profile?: boolean;
     is_premium?: boolean;
     created_at?: string;
+}
+
+export interface CreateProfileData {
+    name: string;
+    user_gender: string;
+    short_bio?: string;
+    city?: string;
+    avatar_uri?: string; // Form uses avatar_uri
+    avatar_url?: string; // DB uses avatar_url
+    location?: any;
+    latitude?: number;
+    longitude?: number;
+    distance_radius_km?: number;
+    activities?: Activity[];
+    prefers_female: boolean,
+    prefers_male: boolean,
+    prefers_other: boolean,
 }

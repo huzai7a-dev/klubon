@@ -52,44 +52,59 @@ export default function EnterOtpScreen() {
         }
     };
 
-    const handleVerify = async () => {
+    const validateEmail = (): boolean => {
         if (!email) {
             setError('Email is missing. Please go back and try again.');
-            return;
+            return false;
+        }
+        return true;
+    };
+
+    const verifyOtpAndGetSession = async () => {
+        const result = await authService.verifyOtp(email, otp);
+
+        if (!result.success) {
+            setError(result.error || 'Invalid OTP. Please try again.');
+            setOtp('');
+            return null;
         }
 
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (!session) {
+            setError('Session not found. Please try again.');
+            return null;
+        }
+
+        return session;
+    };
+
+    const handleAuthSuccess = async (session: any) => {
+        await signIn(session);
+        const profileData = await profileService.getUserProfile(session.user.id);
+
+        if (profileData) {
+            router.replace('/(app)/discover');
+        } else {
+            router.replace('/setup-profile');
+        }
+    };
+
+    const handleVerify = async () => {
+        if (!validateEmail()) {
+            return;
+        }
 
         try {
             setLoading(true);
             setError('');
 
-            const result = await authService.verifyOtp(email, otp);
+            const session = await verifyOtpAndGetSession();
 
-            if (result.success) {
-                const { data: { session } } = await supabase.auth.getSession();
-                if (session) {
-                    await signIn(session);
-
-                    const profileData = await profileService.getUserProfile(session.user.id);
-
-                    setLoading(false);
-
-                    if (profileData) {
-                        router.replace('/(app)/discover');
-                    } else {
-                        router.replace('/setup-profile');
-                    }
-                } else {
-                    setLoading(false);
-                    setError('Session not found. Please try again.');
-                }
-            } else {
-                setLoading(false);
-                setError(result.error || 'Invalid OTP. Please try again.');
-                setOtp('');
+            if (session) {
+                await handleAuthSuccess(session);
             }
         } catch (error: any) {
-            setLoading(false);
             setError(error.message || 'An unexpected error occurred. Please try again.');
         } finally {
             setLoading(false);
@@ -134,6 +149,8 @@ export default function EnterOtpScreen() {
                             textContentType="oneTimeCode"
                             maxLength={OTP_LENGTH}
                             autoFocus
+                            caretHidden
+                            autoComplete="off"
                         />
 
                         {/* Visual Output */}
@@ -241,7 +258,7 @@ const styles = StyleSheet.create({
     },
     hiddenInput: {
         position: 'absolute',
-        opacity: 0,
+        opacity: 0.01, // Slightly visible for better focus behavior on physical devices
         width: 1,
         height: 1,
     },

@@ -49,7 +49,6 @@ class AuthService {
                 token: otp,
                 type: 'email',
             })
-
             if (error) {
                 return {
                     success: false,
