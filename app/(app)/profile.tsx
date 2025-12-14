@@ -34,7 +34,7 @@ const INITIAL_ACTIVITIES = [
 ];
 
 export default function MyProfileScreen() {
-  const { signOut } = useSession();
+  const { signOut, profile } = useSession();
   const [activities, setActivities] = useState(INITIAL_ACTIVITIES);
   const [isCompetitive, setIsCompetitive] = useState(false);
   const [playTimes, setPlayTimes] = useState("Weekends, Evenings");
@@ -69,23 +69,25 @@ export default function MyProfileScreen() {
     console.log(`Toggled ${key}`);
   };
 
+  console.log("Rendering MyProfileScreen with profile:", profile);
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Header Section */}
         <View style={styles.header}>
-          <Image source={{ uri: USER_PROFILE.photoUrl }} style={styles.avatar} />
-          <Text style={styles.name}>{USER_PROFILE.name}</Text>
-          <Text style={styles.city}>{USER_PROFILE.city}</Text>
+          <Image source={{ uri: profile?.avatar_url }} style={styles.avatar} />
+          <Text style={styles.name}>{profile?.name}</Text>
+          <Text style={styles.city}>{profile?.city}</Text>
 
-          <TouchableOpacity onPress={handleEditProfile} style={styles.editButton}>
+          <TouchableOpacity
+            onPress={handleEditProfile}
+            style={styles.editButton}
+          >
             <Text style={styles.editButtonText}>Edit Profile</Text>
           </TouchableOpacity>
 
-          <Text style={styles.bio}>{USER_PROFILE.bio}</Text>
+          <Text style={styles.bio}>{profile?.short_bio}</Text>
         </View>
-
-
         {/* Summary & Action Bar */}
         <View style={styles.summaryBar}>
           <TouchableOpacity onPress={handleViewRatings}>
@@ -97,17 +99,21 @@ export default function MyProfileScreen() {
             onPress={handleViewRatings}
             align="horizontal"
           />
-
         </View>
-
         <View style={styles.divider} />
-
         {/* Activities Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>My Activities</Text>
-            <TouchableOpacity onPress={handleAddActivity} style={styles.iconButton}>
-              <Ionicons name="add-circle-outline" size={24} color={Colors.primary} />
+            <TouchableOpacity
+              onPress={handleAddActivity}
+              style={styles.iconButton}
+            >
+              <Ionicons
+                name="add-circle-outline"
+                size={24}
+                color={Colors.primary}
+              />
             </TouchableOpacity>
           </View>
           <View style={styles.chipContainer}>
@@ -121,9 +127,7 @@ export default function MyProfileScreen() {
             ))}
           </View>
         </View>
-
         <View style={styles.divider} />
-
         {/* Preferences Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Play Style & Times</Text>
@@ -176,9 +180,7 @@ export default function MyProfileScreen() {
             />
           </View>
         </View>
-
         <View style={styles.divider} />
-
         {/* Privacy Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Privacy & Visibility</Text>
@@ -200,15 +202,12 @@ export default function MyProfileScreen() {
             onToggle={() => togglePrivacy("privateProfile")}
           />
         </View>
-
         <View style={styles.section}>
           <TouchableOpacity onPress={signOut} style={styles.logoutButton}>
             <Text style={styles.logoutText}>Log Out</Text>
           </TouchableOpacity>
         </View>
-
         {/* Bottom padding for scroll */}
-
       </ScrollView>
     </SafeAreaView>
   );

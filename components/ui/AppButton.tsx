@@ -1,6 +1,12 @@
 import { Colors } from "@/constants/theme";
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, ViewStyle } from "react-native";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  ViewStyle,
+} from "react-native";
 
 interface Props {
   title?: string;
@@ -8,6 +14,7 @@ interface Props {
   disabled?: boolean;
   style?: ViewStyle;
   compact?: boolean;
+  loading?: boolean;
 }
 
 export default function PrimaryButton({
@@ -16,6 +23,7 @@ export default function PrimaryButton({
   disabled = false,
   style,
   compact = false,
+  loading = false,
 }: Props) {
   return (
     <TouchableOpacity
@@ -29,7 +37,21 @@ export default function PrimaryButton({
         style,
       ]}
     >
-      <Text style={[styles.title, compact && styles.titleCompact, { color: disabled ? Colors.greyNormal : Colors.white }]}>
+      <Text
+        style={[
+          styles.title,
+          compact && styles.titleCompact,
+          { color: disabled ? Colors.greyNormal : Colors.white },
+        ]}
+      >
+        {loading && (
+          <ActivityIndicator
+            size="small"
+            color={Colors.primary}
+            style={styles.loader}
+          />
+        )}
+
         {title}
       </Text>
     </TouchableOpacity>
@@ -63,5 +85,9 @@ const styles = StyleSheet.create({
   titleCompact: {
     fontSize: 15,
     fontWeight: "600",
+  },
+  loader: {
+    marginTop: 8,
+    paddingRight: 10,
   },
 });

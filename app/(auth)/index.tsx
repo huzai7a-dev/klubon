@@ -1,7 +1,6 @@
 import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
-  ActivityIndicator,
   Animated,
   Dimensions,
   Easing,
@@ -135,19 +134,14 @@ export default function AuthScreen() {
             keyboardType="email-address"
           />
 
-          {error ? (
-            <Text style={styles.errorText}>{error}</Text>
-          ) : null}
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
           <AppButton
             title={loading ? "Sending..." : "Sign In"}
             onPress={handleEmailLogin}
             disabled={!isValid || loading}
+            loading={loading}
           />
-
-          {loading && (
-            <ActivityIndicator size="small" color={Colors.primary} style={styles.loader} />
-          )}
 
           <View style={styles.separatorRow}>
             <View style={styles.line} />
@@ -156,10 +150,9 @@ export default function AuthScreen() {
           </View>
 
           {/* TODO: Implement OAuth login */}
-          <SocialSignInButton provider="google" onPress={() => { }} />
-          <SocialSignInButton provider="facebook" onPress={() => { }} />
+          <SocialSignInButton provider="google" onPress={() => {}} />
+          <SocialSignInButton provider="facebook" onPress={() => {}} />
         </Animated.View>
-
       </ScrollView>
     </KeyboardAvoidingView>
   );
