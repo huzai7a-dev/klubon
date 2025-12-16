@@ -1,9 +1,8 @@
-import {
-  DefaultTheme,
-  ThemeProvider
-} from "@react-navigation/native";
+import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
+import * as WebBrowser from "expo-web-browser";
 import "react-native-reanimated";
+WebBrowser.maybeCompleteAuthSession();
 
 import { SessionProvider, useSession } from "@/contexts/AuthContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -16,7 +15,6 @@ export const unstable_settings = {
 
 const queryClient = new QueryClient();
 export default function RootLayout() {
-
   return (
     <SessionProvider>
       <ThemeProvider value={DefaultTheme}>
@@ -39,11 +37,17 @@ function RootNavigator() {
       </Stack.Protected>
       <Stack.Protected guard={!session && !profile}>
         <Stack.Screen name="(auth)/index" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)/enter-otp" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="(auth)/enter-otp"
+          options={{ headerShown: false }}
+        />
       </Stack.Protected>
 
       <Stack.Protected guard={session !== null && profile === null}>
-        <Stack.Screen name="(auth)/setup-profile" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="(auth)/setup-profile"
+          options={{ headerShown: false }}
+        />
       </Stack.Protected>
 
       <Stack.Protected guard={!!session && !!profile}>

@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
-import * as Linking from "expo-linking";
 import * as WebBrowser from "expo-web-browser";
+
+import { makeRedirectUri } from "expo-auth-session";
 
 interface OtpResponse {
   success: boolean;
@@ -74,71 +75,31 @@ class AuthService {
   };
 
   signInWithGoogle = async (): Promise<VerifyOtpResponse> => {
-    try {
-      const redirectUrl = Linking.createURL("/auth/v1/callback");
-      console.log("Redirect URL:", redirectUrl); // Log for debugging
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: redirectUrl,
-          skipBrowserRedirect: true,
-        },
-      });
-
-      if (error) throw error;
-      if (!data?.url) throw new Error("No URL returned from Supabase");
-
-      const result = await WebBrowser.openAuthSessionAsync(
-        data.url,
-        redirectUrl
-      );
-
-      if (result.type === "success" && result.url) {
-        const params = this.parseUrlParams(result.url);
-
-        if (params.error) {
-          return {
-            success: false,
-            error: params.error_description || params.error,
-          };
-        }
-
-        if (params.access_token && params.refresh_token) {
-          const { data: sessionData, error: sessionError } =
-            await supabase.auth.setSession({
-              access_token: params.access_token,
-              refresh_token: params.refresh_token,
-            });
-          if (sessionError) throw sessionError;
-          return { success: true, session: sessionData.session };
-        }
-
-        if (params.code) {
-          const { data: sessionData, error: sessionError } =
-            await supabase.auth.exchangeCodeForSession(params.code);
-          if (sessionError) throw sessionError;
-          return { success: true, session: sessionData.session };
-        }
-      }
-
-      return { success: false, error: "Sign in cancelled" };
-    } catch (error: any) {
-      return {
-        success: false,
-        error: error.message || "An error occurred during Google Sign In",
-      };
-    }
+    return this.performOAuth("google");
   };
 
   signInWithFacebook = async (): Promise<VerifyOtpResponse> => {
+    return this.performOAuth("facebook");
+  };
+
+  private performOAuth = async (
+    provider: "google" | "facebook"
+  ): Promise<VerifyOtpResponse> => {
     try {
-      const redirectUrl = Linking.createURL("/auth/v1/callback");
-      console.log("Redirect URL:", redirectUrl);
+      // const redirectUrl = Linking.createURL("auth/callback");
+      // const redirectUrl = "klubon://auth/callback";
+      const redirectTo = makeRedirectUri({
+        scheme: "klubon",
+        path: "auth/callback",
+        // useProxy: true, // <- UNCOMMENT if testing in Expo Go
+      });
+
+      console.log(`[AuthService] ${provider} Redirect URL:`, redirectTo);
 
       const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "facebook",
+        provider,
         options: {
-          redirectTo: redirectUrl,
+          redirectTo,
           skipBrowserRedirect: true,
         },
       });
@@ -148,7 +109,7 @@ class AuthService {
 
       const result = await WebBrowser.openAuthSessionAsync(
         data.url,
-        redirectUrl
+        redirectTo
       );
 
       if (result.type === "success" && result.url) {
@@ -183,7 +144,7 @@ class AuthService {
     } catch (error: any) {
       return {
         success: false,
-        error: error.message || "An error occurred during Facebook Sign In",
+        error: error.message || `An error occurred during ${provider} Sign In`,
       };
     }
   };
