@@ -1,8 +1,8 @@
 import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
-import * as WebBrowser from "expo-web-browser";
+// import * as WebBrowser from "expo-web-browser";
 import "react-native-reanimated";
-WebBrowser.maybeCompleteAuthSession();
+// WebBrowser.maybeCompleteAuthSession();
 
 import { SessionProvider, useSession } from "@/contexts/AuthContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

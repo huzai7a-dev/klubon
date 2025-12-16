@@ -90,8 +90,7 @@ class AuthService {
       // const redirectUrl = "klubon://auth/callback";
       const redirectTo = makeRedirectUri({
         scheme: "klubon",
-        path: "auth/callback",
-        // useProxy: true, // <- UNCOMMENT if testing in Expo Go
+        path: "callback",
       });
 
       console.log(`[AuthService] ${provider} Redirect URL:`, redirectTo);
