@@ -76,6 +76,7 @@ class AuthService {
   signInWithGoogle = async (): Promise<VerifyOtpResponse> => {
     try {
       const redirectUrl = Linking.createURL("/auth/v1/callback");
+      console.log("Redirect URL:", redirectUrl); // Log for debugging
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
@@ -125,6 +126,64 @@ class AuthService {
       return {
         success: false,
         error: error.message || "An error occurred during Google Sign In",
+      };
+    }
+  };
+
+  signInWithFacebook = async (): Promise<VerifyOtpResponse> => {
+    try {
+      const redirectUrl = Linking.createURL("/auth/v1/callback");
+      console.log("Redirect URL:", redirectUrl);
+
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "facebook",
+        options: {
+          redirectTo: redirectUrl,
+          skipBrowserRedirect: true,
+        },
+      });
+
+      if (error) throw error;
+      if (!data?.url) throw new Error("No URL returned from Supabase");
+
+      const result = await WebBrowser.openAuthSessionAsync(
+        data.url,
+        redirectUrl
+      );
+
+      if (result.type === "success" && result.url) {
+        const params = this.parseUrlParams(result.url);
+
+        if (params.error) {
+          return {
+            success: false,
+            error: params.error_description || params.error,
+          };
+        }
+
+        if (params.access_token && params.refresh_token) {
+          const { data: sessionData, error: sessionError } =
+            await supabase.auth.setSession({
+              access_token: params.access_token,
+              refresh_token: params.refresh_token,
+            });
+          if (sessionError) throw sessionError;
+          return { success: true, session: sessionData.session };
+        }
+
+        if (params.code) {
+          const { data: sessionData, error: sessionError } =
+            await supabase.auth.exchangeCodeForSession(params.code);
+          if (sessionError) throw sessionError;
+          return { success: true, session: sessionData.session };
+        }
+      }
+
+      return { success: false, error: "Sign in cancelled" };
+    } catch (error: any) {
+      return {
+        success: false,
+        error: error.message || "An error occurred during Facebook Sign In",
       };
     }
   };
