@@ -4,7 +4,7 @@
     "slug": "klubon",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/main-icon.jpeg",
     "scheme": "klubon",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -14,9 +14,9 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/icon.png",
-        "backgroundImage": "./assets/images/icon.png",
-        "monochromeImage": "./assets/images/icon.png"
+        "foregroundImage": "./assets/images/main-icon.jpeg",
+        "backgroundImage": "./assets/images/main-icon.jpeg",
+        "monochromeImage": "./assets/images/main-icon.jpeg"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,

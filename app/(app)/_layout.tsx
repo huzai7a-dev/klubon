@@ -93,7 +93,15 @@ export default function TabLayout() {
             tabBarStyle: { display: "none" }, // Hide tab bar on chat detail
           }}
         />
+        <Tabs.Screen
+          name="profile/edit_profile"
+          options={{
+            href: null,
+            tabBarStyle: { display: "none" },
+          }}
+        />
       </Tabs>
+
     </View>
   );
 }
