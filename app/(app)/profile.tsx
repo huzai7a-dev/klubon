@@ -1,13 +1,12 @@
-import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   Image,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -34,18 +33,14 @@ const INITIAL_ACTIVITIES = [
 ];
 
 export default function MyProfileScreen() {
-  const { signOut, profile } = useSession();
+  const { signOut, profile, updateUserProfile } = useSession();
   const [activities, setActivities] = useState(INITIAL_ACTIVITIES);
-  const [isCompetitive, setIsCompetitive] = useState(false);
-  const [playTimes, setPlayTimes] = useState("Weekends, Evenings");
-  const [privacySettings, setPrivacySettings] = useState({
-    hideDistance: false,
-    hideLastActive: true,
-    privateProfile: false,
-  });
+  const isCompetitive = profile?.competitive_toggle ?? false;
+
+
 
   const handleEditProfile = () => {
-    console.log("Navigate to Edit Profile");
+    router.push("/(app)/profile/edit_profile");
   };
 
   const handleViewRatings = () => {
@@ -61,12 +56,10 @@ export default function MyProfileScreen() {
     // In a real app, this would show a confirmation or toggle selection state
   };
 
-  const togglePrivacy = (key: keyof typeof privacySettings) => {
-    setPrivacySettings((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-    console.log(`Toggled ${key}`);
+  const togglePrivacy = (key: 'hide_precise_distance' | 'hide_last_active' | 'private_profile') => {
+    // Determine the new value based on current profile state
+    const currentValue = profile?.[key] || false;
+    updateUserProfile({ [key]: !currentValue });
   };
 
   return (
@@ -104,16 +97,6 @@ export default function MyProfileScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>My Activities</Text>
-            <TouchableOpacity
-              onPress={handleAddActivity}
-              style={styles.iconButton}
-            >
-              <Ionicons
-                name="add-circle-outline"
-                size={24}
-                color={Colors.primary}
-              />
-            </TouchableOpacity>
           </View>
           <View style={styles.chipContainer}>
             {profile?.user_activities?.map((activity) => (
@@ -139,7 +122,7 @@ export default function MyProfileScreen() {
                   styles.toggleOption,
                   !isCompetitive && styles.toggleOptionActive,
                 ]}
-                onPress={() => setIsCompetitive(false)}
+                onPress={() => updateUserProfile({ competitive_toggle: false })}
               >
                 <Text
                   style={[
@@ -155,7 +138,7 @@ export default function MyProfileScreen() {
                   styles.toggleOption,
                   isCompetitive && styles.toggleOptionActive,
                 ]}
-                onPress={() => setIsCompetitive(true)}
+                onPress={() => updateUserProfile({ competitive_toggle: true })}
               >
                 <Text
                   style={[
@@ -171,12 +154,9 @@ export default function MyProfileScreen() {
 
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>Typical Play Times</Text>
-            <TextInput
-              style={styles.textInput}
-              value={playTimes}
-              onChangeText={setPlayTimes}
-              placeholder="e.g. Weekends, Evenings"
-            />
+            <Text style={{ fontSize: 16, color: Colors.text, paddingVertical: 10 }}>
+              {profile?.typical_play_times || "Not set"}
+            </Text>
           </View>
         </View>
         <View style={styles.divider} />
@@ -187,18 +167,18 @@ export default function MyProfileScreen() {
             label="Hide Precise Distance"
             description="Show approximate location only"
             value={profile?.hide_precise_distance || false}
-            onToggle={() => togglePrivacy("hideDistance")}
+            onToggle={() => togglePrivacy("hide_precise_distance")}
           />
           <SettingToggle
             label="Hide Last Active"
             value={profile?.hide_last_active || false}
-            onToggle={() => togglePrivacy("hideLastActive")}
+            onToggle={() => togglePrivacy("hide_last_active")}
           />
           <SettingToggle
             label="Private Profile"
             description="Only friends can message you"
             value={profile?.private_profile || false}
-            onToggle={() => togglePrivacy("privateProfile")}
+            onToggle={() => togglePrivacy("private_profile")}
           />
         </View>
         <View style={styles.section}>

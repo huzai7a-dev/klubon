@@ -3,7 +3,7 @@ import FilterChip from "@/components/ui/FilterChip";
 import { Colors } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
-import { FlatList, Image, Platform, StyleSheet, Text, View } from "react-native";
+import { FlatList, Image, Platform, StyleSheet, View } from "react-native";
 
 const MOCK_USERS = [
   {
@@ -84,7 +84,6 @@ export default function DiscoverScreen() {
           source={require("../../assets/images/logo-black.png")}
           style={styles.logo}
         />
-        <Text style={styles.headerTitle}>KLUBON</Text>
         <Ionicons name="options-outline" size={22} color={Colors.text} />
       </View>
 

@@ -148,6 +148,86 @@ class ProfileService {
             return null;
         }
     };
+
+    updateProfile = async (
+        userId: string,
+        updates: Partial<UserProfile>
+    ): Promise<UserProfile | null> => {
+        try {
+            const { data, error } = await supabase
+                .from("profiles")
+                .update(updates)
+                .eq("id", userId)
+                .select()
+                .single();
+
+            if (error) {
+                console.error("Error updating profile:", error);
+                return null;
+            }
+
+            return data;
+        } catch (error) {
+            console.error("Error in updateProfile service:", error);
+            return null;
+        }
+    };
+
+    updateUserActivities = async (
+        userId: string,
+        activityIds: string[]
+    ): Promise<boolean> => {
+        try {
+            // 1. Delete existing activities
+            const { error: deleteError } = await supabase
+                .from("user_activities")
+                .delete()
+                .eq("user_id", userId);
+
+            if (deleteError) {
+                console.error("Error clearing user activities:", deleteError);
+                return false;
+            }
+
+            // 2. Insert new activities
+            if (activityIds.length > 0) {
+                // We need to insert generic number_of_players or get it from somewhere. 
+                // For now, default to 1 as it's a required field in many schemas, or maybe optional?
+                // The earlier code used activity.playerCount || 1.
+                const activitiesPayload = activityIds.map((id) => ({
+                    user_id: userId,
+                    activity_id: id,
+                    number_of_players: 1,
+                }));
+
+                const { error: insertError } = await supabase
+                    .from("user_activities")
+                    .insert(activitiesPayload);
+
+                if (insertError) {
+                    console.error("Error inserting user activities:", insertError);
+                    return false;
+                }
+            }
+
+            return true;
+        } catch (error) {
+            console.error("Error in updateUserActivities:", error);
+            return false;
+        }
+    };
+
+    uploadAvatar = async (userId: string, uri: string): Promise<string | null> => {
+        try {
+            const extension = uri.split(".").pop()?.toLowerCase() || "jpg";
+            const path = `${userId}/avatar_${Date.now()}.${extension}`; // Timestamp to avoid caching issues
+
+            return await storageService.uploadImage(uri, "avatars", path);
+        } catch (error) {
+            console.error("Error in uploadAvatar service:", error);
+            return null;
+        }
+    };
 }
 
 export default new ProfileService();

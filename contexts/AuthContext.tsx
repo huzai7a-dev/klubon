@@ -21,6 +21,8 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   loadProfile: () => Promise<void>;
   updateProfileState: (profile: UserProfile) => void;
+  updateUserProfile: (updates: Partial<UserProfile>) => Promise<void>;
+  updateUserActivities: (activityIds: string[]) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -33,6 +35,8 @@ const AuthContext = createContext<AuthContextType>({
   signOut: async () => { },
   loadProfile: async () => { },
   updateProfileState: () => { },
+  updateUserProfile: async () => { },
+  updateUserActivities: async () => { },
 });
 
 // Use this hook to access the user info.
@@ -96,6 +100,41 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
   const updateProfileState = (newProfile: UserProfile) => {
     setProfile(newProfile);
+  };
+
+  const updateUserProfile = async (updates: Partial<UserProfile>) => {
+    if (!profile || !user) return;
+
+    // 1. Optimistic Update
+    setProfile((prev) => (prev ? { ...prev, ...updates } : null));
+
+    try {
+      // 2. Call Service
+      const updatedProfile = await profileService.updateProfile(user.id, updates);
+
+      // 3. Reconcile if needed (optional, but good practice)
+      if (updatedProfile) {
+        setProfile((prev) => (prev ? { ...prev, ...updatedProfile } : updatedProfile));
+      }
+    } catch (error) {
+      console.error("Failed to update profile", error);
+      // Revert on error? For now, we'll just log it. 
+      // In a real app, you might want a toast notification.
+    }
+  };
+
+  const updateUserActivities = async (activityIds: string[]) => {
+    if (!user?.id) return;
+
+    try {
+      const success = await profileService.updateUserActivities(user.id, activityIds);
+      if (success) {
+        // Reload profile to get the full joined activity objects
+        await loadProfile();
+      }
+    } catch (error) {
+      console.error("Failed to update activities", error);
+    }
   };
 
   useEffect(() => {
@@ -174,6 +213,8 @@ export function SessionProvider({ children }: PropsWithChildren) {
         signOut,
         loadProfile,
         updateProfileState,
+        updateUserProfile,
+        updateUserActivities,
       }}
     >
       {children}
