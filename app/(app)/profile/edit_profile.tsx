@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import {
     ActivityIndicator,
     Alert,
+    FlatList,
     Image,
     Modal,
     ScrollView,
@@ -16,11 +17,11 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Activity } from "@/components/ui/ActivityChip";
-import FilterChip from "@/components/ui/FilterChip";
+import ActivitySelector from "@/components/profile/ActivitySelector";
+import ActivityChip, { Activity } from "@/components/ui/ActivityChip";
+import SelectedActivityRow from "@/components/ui/SelectedActivityRow";
 import { Colors } from "@/constants/theme";
 import { useSession } from "@/contexts/AuthContext";
-import activitiesService from "@/services/activities.service";
 import profileService from "@/services/profile.service";
 
 export default function EditProfileScreen() {
@@ -30,13 +31,13 @@ export default function EditProfileScreen() {
     const [name, setName] = useState(profile?.name || "");
     const [bio, setBio] = useState(profile?.short_bio || "");
     const [playTimes, setPlayTimes] = useState(profile?.typical_play_times || "");
-    const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
+    const [selectedActivities, setSelectedActivities] = useState<Activity[]>([]);
     const [avatarUri, setAvatarUri] = useState(profile?.avatar_url || "");
     const [isSaving, setIsSaving] = useState(false);
 
-    // Modal state for adding activities
+    // Modal state
     const [isActivityModalVisible, setIsActivityModalVisible] = useState(false);
-    const [allActivities, setAllActivities] = useState<Activity[]>([]);
+    const [isReviewOpen, setIsReviewOpen] = useState(false);
 
     useEffect(() => {
         // Initialize state from profile
@@ -46,20 +47,17 @@ export default function EditProfileScreen() {
             setPlayTimes(profile.typical_play_times || "");
             setAvatarUri(profile.avatar_url || "");
 
-            const currentActivityIds = profile.user_activities?.map(ua => ua.activity_id) || [];
-            setSelectedActivities(currentActivityIds);
+            // Map user_activities (which has DB structure) to Activity objects
+            if (profile.user_activities) {
+                const activities: Activity[] = profile.user_activities.map(ua => ({
+                    id: ua.activity_id,
+                    name: ua.activities?.name || "Unknown",
+                    playerCount: ua.number_of_players || 1
+                }));
+                setSelectedActivities(activities);
+            }
         }
-
-        // Fetch all activities for the modal
-        loadAllActivities();
     }, [profile]);
-
-    const loadAllActivities = async () => {
-        const activities = await activitiesService.getAllActivities({ page: 1, limit: 100 });
-        if (activities) {
-            setAllActivities(activities);
-        }
-    };
 
     const pickImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -96,10 +94,14 @@ export default function EditProfileScreen() {
                 avatar_url: finalAvatarUrl || undefined,
             });
 
-            // 3. Update activities
-            await updateUserActivities(selectedActivities);
+            // 3. Update activities with player counts
+            // Map Activity[] to { id, playerCount } expected by context
+            const activitiesToUpdate = selectedActivities.map(a => ({
+                id: a.id,
+                playerCount: a.playerCount || 1
+            }));
+            await updateUserActivities(activitiesToUpdate);
 
-            // router.back();
             router.replace("/(app)/profile");
         } catch (error) {
             Alert.alert("Error", "Failed to update profile");
@@ -109,27 +111,25 @@ export default function EditProfileScreen() {
         }
     };
 
-    const toggleActivitySelection = (activityId: string) => {
+    const toggleActivitySelection = (activity: Activity) => {
         setSelectedActivities(prev => {
-            if (prev.includes(activityId)) {
-                return prev.filter(id => id !== activityId);
+            const exists = prev.some(a => a.id === activity.id);
+            if (exists) {
+                return prev.filter(a => a.id !== activity.id);
             } else {
-                return [...prev, activityId];
+                return [...prev, { ...activity, playerCount: 1 }];
             }
         });
     };
 
     const removeActivity = (activityId: string) => {
-        setSelectedActivities(prev => prev.filter(id => id !== activityId));
+        setSelectedActivities(prev => prev.filter(a => a.id !== activityId));
     };
 
-    // Helper to get activity name from ID (from profile or allActivities)
-    const getActivityName = (id: string) => {
-        const fromProfile = profile?.user_activities?.find(ua => ua.activity_id === id)?.activities?.name;
-        if (fromProfile) return fromProfile;
-
-        const fromAll = allActivities.find(a => a.id === id)?.name;
-        return fromAll || "Unknown Activity";
+    const updatePlayerCount = (activityId: string, count: number) => {
+        setSelectedActivities(prev =>
+            prev.map(a => a.id === activityId ? { ...a, playerCount: count } : a)
+        );
     };
 
     return (
@@ -203,18 +203,20 @@ export default function EditProfileScreen() {
                 <View style={styles.section}>
                     <View style={styles.sectionHeader}>
                         <Text style={styles.label}>My Activities</Text>
-                        <TouchableOpacity onPress={() => setIsActivityModalVisible(true)}>
-                            <Text style={styles.addButtonText}>+ Add</Text>
-                        </TouchableOpacity>
+                        <View style={styles.actionButtons}>
+                            <TouchableOpacity onPress={() => setIsActivityModalVisible(true)}>
+                                <Text style={styles.addButtonText}>+ Add</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
 
                     <View style={styles.chipContainer}>
-                        {selectedActivities.map(id => (
-                            <FilterChip
-                                key={id}
-                                label={getActivityName(id)}
-                                isActive={true}
-                                onPress={() => removeActivity(id)}
+                        {selectedActivities.map(activity => (
+                            <ActivityChip
+                                key={activity.id}
+                                activity={activity}
+                                isSelected={true}
+                                onToggle={() => removeActivity(activity.id)}
                             />
                         ))}
                         {selectedActivities.length === 0 && (
@@ -237,19 +239,59 @@ export default function EditProfileScreen() {
                             <Text style={styles.doneText}>Done</Text>
                         </TouchableOpacity>
                     </View>
-                    <ScrollView contentContainerStyle={styles.modalContent}>
-                        <View style={styles.chipContainer}>
-                            {allActivities.map(activity => (
-                                <FilterChip
-                                    key={activity.id}
-                                    label={activity.name}
-                                    isActive={selectedActivities.includes(activity.id)}
-                                    onPress={() => toggleActivitySelection(activity.id)}
-                                />
-                            ))}
-                        </View>
-                    </ScrollView>
+                    <View style={{ flex: 1 }}>
+                        <ActivitySelector
+                            selectedActivityIds={selectedActivities.map(a => a.id)}
+                            onToggle={toggleActivitySelection}
+                        />
+
+                        {/* FLOATING BAR */}
+                        {selectedActivities.length > 0 && (
+                            <View style={styles.floatingBar}>
+                                <Text style={styles.barText}>
+                                    {selectedActivities.length} Activit
+                                    {selectedActivities.length === 1 ? "y" : "ies"} Selected
+                                </Text>
+
+                                <TouchableOpacity
+                                    style={styles.reviewButton}
+                                    onPress={() => setIsReviewOpen(true)}
+                                >
+                                    <Text style={styles.reviewButtonText}>Review</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                    </View>
                 </View>
+            </Modal>
+
+            {/* Review Selection Modal */}
+            <Modal
+                visible={isReviewOpen}
+                animationType="slide"
+                presentationStyle="pageSheet"
+                onRequestClose={() => setIsReviewOpen(false)}
+            >
+                <SafeAreaView style={styles.modalContainer}>
+                    <View style={styles.modalHeader}>
+                        <Text style={styles.modalTitle}>Review Selection</Text>
+                        <TouchableOpacity onPress={() => setIsReviewOpen(false)}>
+                            <Text style={styles.doneText}>Done</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <FlatList
+                        data={selectedActivities}
+                        keyExtractor={(item) => item.id}
+                        contentContainerStyle={styles.modalContent}
+                        renderItem={({ item }) => (
+                            <SelectedActivityRow
+                                activity={item}
+                                onUpdatePlayerCount={updatePlayerCount}
+                            />
+                        )}
+                    />
+                </SafeAreaView>
             </Modal>
         </SafeAreaView>
     );
@@ -342,10 +384,25 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginBottom: 12,
     },
+    actionButtons: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 16,
+    },
     addButtonText: {
         fontSize: 16,
         color: Colors.primary,
         fontWeight: "600",
+    },
+    reviewButton: {
+        backgroundColor: Colors.primary,
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 8,
+    },
+    reviewButtonText: {
+        color: Colors.white,
+        fontWeight: "700",
     },
     chipContainer: {
         flexDirection: "row",
@@ -379,5 +436,29 @@ const styles = StyleSheet.create({
     },
     modalContent: {
         padding: 16,
+    },
+    floatingBar: {
+        position: "absolute",
+        bottom: 20,
+        left: 20,
+        right: 20,
+        backgroundColor: Colors.text,
+        borderRadius: 16,
+        padding: 16,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    barText: {
+        color: Colors.white,
+        fontWeight: "600",
     },
 });

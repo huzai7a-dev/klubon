@@ -22,7 +22,7 @@ interface AuthContextType {
   loadProfile: () => Promise<void>;
   updateProfileState: (profile: UserProfile) => void;
   updateUserProfile: (updates: Partial<UserProfile>) => Promise<void>;
-  updateUserActivities: (activityIds: string[]) => Promise<void>;
+  updateUserActivities: (activities: { id: string; playerCount: number }[]) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -123,11 +123,11 @@ export function SessionProvider({ children }: PropsWithChildren) {
     }
   };
 
-  const updateUserActivities = async (activityIds: string[]) => {
+  const updateUserActivities = async (activities: { id: string; playerCount: number }[]) => {
     if (!user?.id) return;
 
     try {
-      const success = await profileService.updateUserActivities(user.id, activityIds);
+      const success = await profileService.updateUserActivities(user.id, activities);
       if (success) {
         // Reload profile to get the full joined activity objects
         await loadProfile();

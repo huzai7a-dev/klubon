@@ -175,7 +175,7 @@ class ProfileService {
 
     updateUserActivities = async (
         userId: string,
-        activityIds: string[]
+        activities: { id: string; playerCount: number }[]
     ): Promise<boolean> => {
         try {
             // 1. Delete existing activities
@@ -190,14 +190,11 @@ class ProfileService {
             }
 
             // 2. Insert new activities
-            if (activityIds.length > 0) {
-                // We need to insert generic number_of_players or get it from somewhere. 
-                // For now, default to 1 as it's a required field in many schemas, or maybe optional?
-                // The earlier code used activity.playerCount || 1.
-                const activitiesPayload = activityIds.map((id) => ({
+            if (activities.length > 0) {
+                const activitiesPayload = activities.map((a) => ({
                     user_id: userId,
-                    activity_id: id,
-                    number_of_players: 1,
+                    activity_id: a.id,
+                    number_of_players: a.playerCount,
                 }));
 
                 const { error: insertError } = await supabase
