@@ -24,7 +24,7 @@ export default function Stepper({
     style,
     activeColor = Colors.primary,
     inactiveColor = Colors.greyLight,
-    completedColor = Colors.green,
+    completedColor = Colors.primaryLight,
     showLabels = true,
     compact = false,
 }: StepperProps) {
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     checkmark: {
         fontSize: 16,
         fontWeight: "bold",
-        color: Colors.white,
+        color: Colors.primary,
     },
     stepLabel: {
         marginTop: 8,
