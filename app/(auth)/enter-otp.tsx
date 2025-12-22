@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import AppButton from "@/components/ui/AppButton";
 import { AppText } from "@/components/ui/AppText";
@@ -31,6 +32,7 @@ export default function EnterOtpScreen() {
   const router = useRouter();
   const { email } = useLocalSearchParams<{ email: string }>();
   const { signIn } = useSession();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     let interval: number;
@@ -125,7 +127,10 @@ export default function EnterOtpScreen() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+      <TouchableOpacity
+        style={[styles.backButton, { top: insets.top + 10 }]}
+        onPress={() => router.back()}
+      >
         <Ionicons name="arrow-back" size={24} color={Colors.text} />
       </TouchableOpacity>
 
@@ -230,7 +235,6 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: "absolute",
-    top: Platform.OS === "ios" ? 50 : 20,
     left: 20,
     zIndex: 10,
     width: 40,
