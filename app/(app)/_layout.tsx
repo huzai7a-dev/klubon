@@ -1,11 +1,18 @@
 import { HapticTab } from "@/components/HapticTab";
 import { Colors } from "@/constants/theme";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { Tabs } from "expo-router";
+import { Tabs, useSegments } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
 export default function TabLayout() {
+  const segments = useSegments();
+
+  // Check if we are in a detail screen (e.g., chats/[id], profile/[id], profile/edit_profile)
+  // Segments for chats/[id] would be ["(app)", "chats", "[id]"]
+  // Segments for profile/edit_profile would be ["(app)", "profile", "edit_profile"]
+  const isDetailScreen = (segments as any).includes("[id]") || (segments as any).includes("edit_profile");
 
   return (
     <View style={styles.container}>
@@ -31,6 +38,7 @@ export default function TabLayout() {
             elevation: 20,
             paddingTop: 0,
             paddingBottom: 0,
+            display: isDetailScreen ? "none" : "flex",
           },
           tabBarItemStyle: {
             justifyContent: "center",
@@ -71,35 +79,36 @@ export default function TabLayout() {
         />
 
         <Tabs.Screen
+          name="favorites"
+          options={{
+            title: "Favorites",
+            tabBarIcon: ({ color }) => (
+              <Ionicons size={28} name="heart" color={color} />
+            ),
+          }}
+        />
+
+        <Tabs.Screen
           name="profile"
           options={{
-            title: "Profile",
-            tabBarIcon: ({ color }) => (
-              <MaterialIcons size={28} name="person" color={color} />
-            ),
+            href: null,
           }}
         />
 
         <Tabs.Screen
           name="profile/[id]"
           options={{
-            href: null, // Hide from tab bar
-          }}
-        />
-        <Tabs.Screen
-          name="chat/[id]"
-          options={{
             href: null,
-            tabBarStyle: { display: "none" }, // Hide tab bar on chat detail
           }}
         />
+
         <Tabs.Screen
           name="profile/edit_profile"
           options={{
             href: null,
-            tabBarStyle: { display: "none" },
           }}
         />
+
       </Tabs>
 
     </View>

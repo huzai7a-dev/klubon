@@ -3,12 +3,12 @@ import {
   ThemeProvider
 } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
+import React from "react";
 import "react-native-reanimated";
 
 import { SessionProvider, useSession } from "@/contexts/AuthContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
-import React from "react";
 
 export const unstable_settings = {
   initialRouteName: "(app)",

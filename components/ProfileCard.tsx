@@ -1,3 +1,4 @@
+import { UserProfile } from "@/types";
 import { MaterialIcons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
@@ -12,18 +13,8 @@ import {
 } from "react-native";
 import { Colors } from "../constants/theme";
 
-interface User {
-  id: string;
-  name: string;
-  distance: string;
-  rating?: number;
-  activities: string[];
-  photoUrl?: string;
-  age?: number; // Added optional age since it's in the design
-}
-
 interface Props {
-  user: User;
+  user: UserProfile;
   style?: ViewStyle;
 }
 
@@ -43,11 +34,12 @@ export default function ProfileCard({ user, style }: Props) {
     console.log("Favorite", user.name);
   };
 
+
   return (
     <View style={[styles.card, style]}>
       {/* Full Bleed Image */}
       <Image
-        source={{ uri: user.photoUrl || "https://placekitten.com/800/600" }}
+        source={{ uri: user.avatar_url || "https://placekitten.com/800/600" }}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       />
@@ -58,20 +50,20 @@ export default function ProfileCard({ user, style }: Props) {
           {/* Name & Age */}
           <Text style={styles.nameRow}>
             <Text style={styles.name}>{user.name}</Text>
-            {user.age && <Text style={styles.age}>, {user.age}</Text>}
+            {/* {user.age && <Text style={styles.age}>, {user.age}</Text>} */}
           </Text>
 
           {/* Location */}
           <View style={styles.locationRow}>
             <MaterialIcons name="location-on" size={16} color={Colors.white} />
-            <Text style={styles.locationText}>{user.distance}</Text>
+            <Text style={styles.locationText}>{user?.distance_radius_km || 0}</Text>
           </View>
 
           {/* Activity Chips */}
           <View style={styles.chipRow}>
-            {user.activities.slice(0, 3).map((activity) => (
-              <View key={activity} style={styles.chip}>
-                <Text style={styles.chipText}>{activity}</Text>
+            {user?.user_activities?.map((activity) => (
+              <View key={activity?.activity?.name} style={styles.chip}>
+                <Text style={styles.chipText}>{activity?.activity?.name}</Text>
               </View>
             ))}
           </View>

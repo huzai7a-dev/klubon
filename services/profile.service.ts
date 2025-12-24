@@ -3,12 +3,55 @@ import { CreateProfileData, UserProfile } from "@/types";
 import storageService from "./storage.service";
 
 class ProfileService {
-    getUserProfile = async (userId: string): Promise<UserProfile | null> => {
+
+    getDiscoveredProfiles = async ({ }: any, page: number, limit: number): Promise<UserProfile[] | null> => {
+        //get all profiles with max three activities with pagination
         try {
-            // First fetch the profile
+            const { data: profiles, error } = await supabase
+                .from("profiles")
+                .select(`
+                        *,
+                        user_activities (
+                        id,
+                        number_of_players,
+                        activity_id,
+                        activity:activity_id (
+                            name,
+                            description
+                        )
+                    )
+                `)
+                .limit(3, { foreignTable: 'user_activities' })
+                .order("created_at", { ascending: false })
+                .range((page - 1) * limit, page * limit);
+
+            if (error) {
+                console.error("Error fetching profiles:", error);
+                return [];
+            }
+
+            return profiles;
+        } catch (error) {
+            console.error("Error fetching profiles:", error);
+            return null;
+        }
+    }
+    getProfileById = async (userId: string): Promise<UserProfile | null> => {
+        try {
             const { data: profile, error } = await supabase
                 .from("profiles")
-                .select('*')
+                .select(`
+                        *,
+                        user_activities (
+                        id,
+                        number_of_players,
+                        activity_id,
+                        activities:activity_id (
+                            name,
+                            description
+                        )
+                    )
+                `)
                 .eq("id", userId)
                 .single();
 
@@ -19,27 +62,12 @@ class ProfileService {
             }
 
             if (!profile) return null;
-
-            const { data: userActivities, error: activitiesError } = await supabase
-                .from("user_activities")
-                .select(
-                    `
-                    id,
-                    number_of_players,
-                    activity_id,
-                    activities (*)
-                    `
-                )
-                .eq("user_id", userId);
-
-            if (activitiesError) {
-                console.warn("Error fetching user activities:", activitiesError);
-                return { ...profile, user_activities: [] };
-            }
-            console.log(userActivities, 'userActivities')
-            return { ...profile, user_activities: userActivities || [] };
+            return profile;
 
         } catch (error) {
+            if (error?.code === "PGRST303") {
+                await supabase.auth.signOut()
+            }
             console.error("Error fetching profile:", error);
             return null;
         }

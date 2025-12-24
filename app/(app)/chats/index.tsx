@@ -12,79 +12,51 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Colors } from "@/constants/theme";
+import { useChatRooms } from "@/hooks/useChatRoom";
+import useOpenChatRoom from "@/hooks/useOpenChatRoom";
 
-// Mock Data
-const CHAT_DATA = [
-    {
-        id: "1",
-        name: "Alex Carter",
-        message: "Hey! Saw you're nearby...",
-        time: "10:00 AM",
-        photoUrl: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=100&q=80",
-        unread: true,
-    },
-    {
-        id: "2",
-        name: "Maya Gonzales",
-        message: "Are we still on for...",
-        time: "Yesterday",
-        photoUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80",
-    },
-    {
-        id: "3",
-        name: "Jordan Lee",
-        message: "Great game yesterday!",
-        time: "Yesterday",
-        photoUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80",
-    },
-    {
-        id: "4",
-        name: "Nike Cadra",
-        message: "Hey! Saw you're near lo...",
-        time: "Yesterday",
-        photoUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80",
-    },
-    {
-        id: "5",
-        name: "Jerrah Waters",
-        message: "Are we stilll on for...",
-        time: "Mon",
-        photoUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80",
-    },
-    {
-        id: "6",
-        name: "Miaa Gonzales",
-        message: "Great game yesterday!",
-        time: "Mon",
-        photoUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80",
-    },
-    {
-        id: "7",
-        name: "Alex Carter",
-        message: "Hey! Saw you're nearby...",
-        time: "Mon",
-        photoUrl: "https://images.unsplash.com/photo-1552058544-f2b08422138a?auto=format&fit=crop&w=100&q=80",
-    },
-];
+
+const formatTime = (time: string) => {
+    const date = new Date(time);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const diffInDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+    if (diffInDays === 0) {
+        return "Today";
+    } else if (diffInDays === 1) {
+        return "Yesterday";
+    } else {
+        return date.toLocaleDateString();
+    }
+};
 
 export default function ChatScreen() {
     const router = useRouter();
+    const { data: rooms, isLoading, refetch } = useChatRooms();
+    const { openChatRoom } = useOpenChatRoom();
 
-    const renderItem = ({ item }: { item: typeof CHAT_DATA[0] }) => (
+    const renderItem = ({ item }: { item: any }) => (
         <TouchableOpacity
             style={styles.chatItem}
             activeOpacity={0.7}
-            onPress={() => router.push(`/chat/${item.id}` as any)}
+            onPress={() => openChatRoom({ id: item.other_user_id, name: item.other_user_name, avatar_url: item.other_user_avatar })}
         >
-            <Image source={{ uri: item.photoUrl }} style={styles.avatar} />
+            <Image source={{ uri: item.other_user_avatar }} style={styles.avatar} />
             <View style={styles.chatInfo}>
                 <View style={styles.chatHeader}>
-                    <Text style={styles.name}>{item.name}</Text>
-                    <Text style={styles.time}>{item.time}</Text>
+                    <Text style={styles.name}>{item.other_user_name}</Text>
+                    <Text style={styles.time}>{formatTime(item.last_message_time)}</Text>
                 </View>
-                <Text style={styles.message} numberOfLines={1}>
-                    {item.message}
-                </Text>
+                <View style={styles.chatFooter}>
+                    <Text style={styles.message} numberOfLines={1}>
+                        {item.last_message_content}
+                    </Text>
+                    {item.unread_count > 0 && (
+                        <View style={styles.unreadCount}>
+                            <Text style={styles.unreadCountText}>{item.unread_count}</Text>
+                        </View>
+                    )}
+                </View>
             </View>
         </TouchableOpacity>
     );
@@ -99,8 +71,8 @@ export default function ChatScreen() {
             </View>
 
             <FlatList
-                data={CHAT_DATA}
-                keyExtractor={(item) => item.id}
+                data={rooms}
+                keyExtractor={(item) => item.room_id}
                 renderItem={renderItem}
                 contentContainerStyle={styles.listContent}
                 showsVerticalScrollIndicator={false}
@@ -161,7 +133,6 @@ const styles = StyleSheet.create({
     chatHeader: {
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "center",
         marginBottom: 4,
     },
     name: {
@@ -179,4 +150,21 @@ const styles = StyleSheet.create({
         color: Colors.greyDark,
         lineHeight: 20,
     },
+    unreadCount: {
+        backgroundColor: Colors.primary,
+        borderRadius: 12,
+        padding: 4,
+        width: 24,
+        height: 24,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    unreadCountText: {
+        color: Colors.white,
+        fontSize: 12,
+    },
+    chatFooter: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+    }
 });

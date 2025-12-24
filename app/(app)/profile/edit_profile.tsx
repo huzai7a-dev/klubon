@@ -22,42 +22,46 @@ import ActivityChip, { Activity } from "@/components/ui/ActivityChip";
 import SelectedActivityRow from "@/components/ui/SelectedActivityRow";
 import { Colors } from "@/constants/theme";
 import { useSession } from "@/contexts/AuthContext";
+import activitiesService from "@/services/activities.service";
 import profileService from "@/services/profile.service";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function EditProfileScreen() {
-    const { profile, updateUserProfile, updateUserActivities } = useSession();
+    const queryClient = useQueryClient();
+    const { profile, updateUserProfile } = useSession();
 
-    // Local state for form fields
     const [name, setName] = useState(profile?.name || "");
     const [bio, setBio] = useState(profile?.short_bio || "");
     const [playTimes, setPlayTimes] = useState(profile?.typical_play_times || "");
     const [selectedActivities, setSelectedActivities] = useState<Activity[]>([]);
     const [avatarUri, setAvatarUri] = useState(profile?.avatar_url || "");
     const [isSaving, setIsSaving] = useState(false);
-
-    // Modal state
     const [isActivityModalVisible, setIsActivityModalVisible] = useState(false);
+
+    const { data: userActivities, refetch: refetchUserActivities } = useQuery({
+        queryKey: ["activities"],
+        queryFn: () => activitiesService.getActivitiesByProfileId(profile!.id),
+        enabled: !!profile?.id,
+    });
     const [isReviewOpen, setIsReviewOpen] = useState(false);
 
     useEffect(() => {
-        // Initialize state from profile
         if (profile) {
             setName(profile.name);
             setBio(profile.short_bio || "");
             setPlayTimes(profile.typical_play_times || "");
             setAvatarUri(profile.avatar_url || "");
 
-            // Map user_activities (which has DB structure) to Activity objects
-            if (profile.user_activities) {
-                const activities: Activity[] = profile.user_activities.map(ua => ({
-                    id: ua.activity_id,
-                    name: ua.activities?.name || "Unknown",
-                    playerCount: ua.number_of_players || 1
+            if (userActivities) {
+                const activities: Activity[] = userActivities.map(item => ({
+                    id: item.activity.id,
+                    name: item.activity.name,
+                    playerCount: item.number_of_players || 1
                 }));
                 setSelectedActivities(activities);
             }
         }
-    }, [profile]);
+    }, [profile, userActivities]);
 
     const pickImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -78,7 +82,6 @@ export default function EditProfileScreen() {
         try {
             let finalAvatarUrl = profile.avatar_url;
 
-            // 1. Upload new avatar if changed (file uri starts with file:// or content:// usually)
             if (avatarUri && avatarUri !== profile.avatar_url && !avatarUri.startsWith("http")) {
                 const uploadedUrl = await profileService.uploadAvatar(profile.id, avatarUri);
                 if (uploadedUrl) {
@@ -86,7 +89,6 @@ export default function EditProfileScreen() {
                 }
             }
 
-            // 2. Update basic profile info
             await updateUserProfile({
                 name,
                 short_bio: bio,
@@ -94,14 +96,13 @@ export default function EditProfileScreen() {
                 avatar_url: finalAvatarUrl || undefined,
             });
 
-            // 3. Update activities with player counts
-            // Map Activity[] to { id, playerCount } expected by context
             const activitiesToUpdate = selectedActivities.map(a => ({
                 id: a.id,
                 playerCount: a.playerCount || 1
             }));
-            await updateUserActivities(activitiesToUpdate);
-
+            await profileService.updateUserActivities(profile.id, activitiesToUpdate);
+            await refetchUserActivities();
+            queryClient.invalidateQueries({ queryKey: ["activities"] });
             router.replace("/(app)/profile");
         } catch (error) {
             Alert.alert("Error", "Failed to update profile");

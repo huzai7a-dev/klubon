@@ -16,16 +16,16 @@ export interface UserProfile {
   private_profile?: boolean;
   is_premium?: boolean;
   created_at?: string;
-  user_activities?: {
+  user_activities?: UserActivity[];
+}
+
+export interface UserActivity {
+  id: string;
+  number_of_players?: number;
+  activity: {
     id: string;
-    user_id: string;
-    activity_id: string;
-    number_of_players?: number;
-    activities: {
-      id: string;
-      name: string;
-    };
-  }[];
+    name: string;
+  };
 }
 
 export interface CreateProfileData {

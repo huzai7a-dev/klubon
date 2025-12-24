@@ -2,7 +2,13 @@ import RatingSummary from "@/components/RatingSummary";
 import ActionIcon from "@/components/ui/ActionIcon";
 import FilterChip from "@/components/ui/FilterChip";
 import { Colors } from "@/constants/theme";
+import { useSession } from "@/contexts/AuthContext";
+import useOpenChatRoom from "@/hooks/useOpenChatRoom";
+import { supabase } from "@/lib/supabase";
+import activitiesService from "@/services/activities.service";
+import profileService from "@/services/profile.service";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import {
@@ -120,8 +126,21 @@ function ReviewItem({ review }: { review: typeof MOCK_REVIEWS[0] }) {
 }
 
 export default function ProfileDetailScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { openChatRoom } = useOpenChatRoom();
+  const { user: currentUser } = useSession();
+  const { id } = useLocalSearchParams<{ id: string }>();
+
+  const { data: profile } = useQuery({
+    queryKey: ["profile", id],
+    queryFn: () => profileService.getProfileById(id),
+  });
+
+
+  const { data: activities } = useQuery({
+    queryKey: ["activities", id],
+    queryFn: () => activitiesService.getActivitiesByProfileId(id),
+  })
   const [isFavorited, setIsFavorited] = React.useState(
     MOCK_USER_PROFILE.isFavorited
   );
@@ -136,8 +155,27 @@ export default function ProfileDetailScreen() {
     console.log("Toggle favorite for user:", id);
   };
 
-  const handleMessage = () => {
-    console.log("Open message for user:", id);
+  const handleMessage = async (currentUser: string, otherUser: { id: string, name: string, avatar_url: string }) => {
+    const { data: roomId, error } = await supabase.rpc('get_or_create_room', {
+      user_a: currentUser,
+      user_b: otherUser.id
+    });
+
+    if (error) {
+      console.error("Error initializing chat:", error);
+      return;
+    }
+
+    // Now navigate with a GUARANTEED room ID
+    router.push({
+      pathname: "/(app)/chats/[id]",
+      params: {
+        id: roomId,
+        otherUserId: otherUser?.id,
+        otherUserName: otherUser?.name,
+        otherUserAvatar: otherUser?.avatar_url
+      }
+    });
   };
 
   const handleViewAllReviews = () => {
@@ -155,7 +193,7 @@ export default function ProfileDetailScreen() {
         {/* Profile Header with Photo */}
         <View style={styles.headerContainer}>
           <Image
-            source={{ uri: MOCK_USER_PROFILE.photoUrl }}
+            source={{ uri: profile?.avatar_url }}
             style={styles.headerImage}
             resizeMode="cover"
           />
@@ -173,17 +211,17 @@ export default function ProfileDetailScreen() {
           <View style={styles.infoOverlay}>
             <View style={styles.overlayGradient} />
             <View style={styles.overlayContent}>
-              <Text style={styles.userName}>{MOCK_USER_PROFILE.name}</Text>
+              <Text style={styles.userName}>{profile?.name}</Text>
               <View style={styles.locationRow}>
                 <Ionicons
                   name="location"
                   size={16}
                   color="rgba(255,255,255,0.9)"
                 />
-                <Text style={styles.city}>{MOCK_USER_PROFILE.city}</Text>
+                <Text style={styles.city}>{profile?.city}</Text>
               </View>
               <Text style={styles.bio} numberOfLines={2}>
-                {MOCK_USER_PROFILE.bio}
+                {profile?.short_bio}
               </Text>
             </View>
           </View>
@@ -191,6 +229,14 @@ export default function ProfileDetailScreen() {
 
         {/* Action & Summary Bar */}
         <View style={styles.actionBar}>
+          <View style={styles.ratingContainer}>
+            <RatingSummary
+              averageRating={MOCK_USER_PROFILE.averageRating}
+              reviewCount={MOCK_USER_PROFILE.reviewCount}
+              onPress={handleViewAllReviews}
+              align="vertical"
+            />
+          </View>
           <View style={styles.actionButtons}>
             <ActionIcon
               iconName={isFavorited ? "heart" : "heart-outline"}
@@ -200,19 +246,12 @@ export default function ProfileDetailScreen() {
             />
             <ActionIcon
               iconName="chatbubble-outline"
-              onPress={handleMessage}
+              onPress={() => openChatRoom({ id: profile?.id, name: profile?.name, avatar_url: profile?.avatar_url })}
               style={styles.actionButton}
             />
           </View>
 
-          <View style={styles.ratingContainer}>
-            <RatingSummary
-              averageRating={MOCK_USER_PROFILE.averageRating}
-              reviewCount={MOCK_USER_PROFILE.reviewCount}
-              onPress={handleViewAllReviews}
-              align="vertical"
-            />
-          </View>
+
         </View>
 
         {/* Detail Sections */}
@@ -221,10 +260,10 @@ export default function ProfileDetailScreen() {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Activities & Skills</Text>
             <View style={styles.activitiesContainer}>
-              {MOCK_USER_PROFILE.activities.map((activity) => (
+              {activities?.map((activity) => (
                 <FilterChip
-                  key={activity}
-                  label={activity}
+                  key={activity.activity.id}
+                  label={activity.activity.name}
                   isActive={true}
                   onPress={() => console.log("Activity pressed:", activity)}
                 />
@@ -301,7 +340,7 @@ export default function ProfileDetailScreen() {
   );
 }
 
-const HEADER_HEIGHT = 320;
+const HEADER_HEIGHT = 380;
 
 const styles = StyleSheet.create({
   container: {
@@ -326,11 +365,11 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: "absolute",
-    top: 50,
+    top: 20,
     left: 20,
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     alignItems: "center",
     justifyContent: "center",
@@ -360,7 +399,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: 20,
-    paddingBottom: 24,
   },
   userName: {
     fontSize: 28,
@@ -395,7 +433,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
+    paddingHorizontal: 12,
     paddingVertical: 18,
     backgroundColor: Colors.white,
     borderBottomWidth: 1,
@@ -404,6 +442,7 @@ const styles = StyleSheet.create({
   actionButtons: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "flex-end",
     flex: 1,
   },
   actionButton: {
@@ -424,7 +463,7 @@ const styles = StyleSheet.create({
   },
   ratingContainer: {
     flex: 1,
-    alignItems: "flex-end",
+    alignItems: "flex-start",
     justifyContent: "center",
   },
   detailsContainer: {

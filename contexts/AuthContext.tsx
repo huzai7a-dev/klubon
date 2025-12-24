@@ -10,6 +10,7 @@ import {
   useState,
   type PropsWithChildren,
 } from "react";
+import { Alert } from "react-native";
 
 interface AuthContextType {
   session: Session | null;
@@ -22,7 +23,6 @@ interface AuthContextType {
   loadProfile: () => Promise<void>;
   updateProfileState: (profile: UserProfile) => void;
   updateUserProfile: (updates: Partial<UserProfile>) => Promise<void>;
-  updateUserActivities: (activities: { id: string; playerCount: number }[]) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -36,7 +36,6 @@ const AuthContext = createContext<AuthContextType>({
   loadProfile: async () => { },
   updateProfileState: () => { },
   updateUserProfile: async () => { },
-  updateUserActivities: async () => { },
 });
 
 // Use this hook to access the user info.
@@ -61,7 +60,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
     try {
       setIsLoading(true);
-      const profileData = await profileService.getUserProfile(user.id);
+      const profileData = await profileService.getProfileById(user.id);
       setProfile(profileData);
     } catch (error) {
       router.replace("/(auth)");
@@ -76,7 +75,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
     if (newSession.user?.id) {
       setIsLoading(true);
-      const profileData = await profileService.getUserProfile(
+      const profileData = await profileService.getProfileById(
         newSession.user.id
       );
       setProfile(profileData);
@@ -123,20 +122,6 @@ export function SessionProvider({ children }: PropsWithChildren) {
     }
   };
 
-  const updateUserActivities = async (activities: { id: string; playerCount: number }[]) => {
-    if (!user?.id) return;
-
-    try {
-      const success = await profileService.updateUserActivities(user.id, activities);
-      if (success) {
-        // Reload profile to get the full joined activity objects
-        await loadProfile();
-      }
-    } catch (error) {
-      console.error("Failed to update activities", error);
-    }
-  };
-
   useEffect(() => {
     let mounted = true;
 
@@ -152,16 +137,27 @@ export function SessionProvider({ children }: PropsWithChildren) {
           setSession(currentSession);
           setUser(currentSession.user);
 
-          const profileData = await profileService.getUserProfile(
+          const profileData = await profileService.getProfileById(
             currentSession.user.id
           );
+
 
           if (!mounted) return;
 
           setProfile(profileData);
         }
       } catch (error) {
-        console.error("Error initializing auth:", error);
+        if (error?.message === "JWT expired") {
+          signOut();
+          Alert.alert("Session Expired", "Your session has expired. Please sign in again.", [
+            {
+              text: "OK",
+              onPress: () => router.replace("/(auth)"),
+            },
+          ]);
+        } else {
+          console.error("Error initializing auth:", error);
+        }
       } finally {
         if (mounted) {
           setIsInitializing(false);
@@ -181,7 +177,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
         setUser(newSession.user);
 
         if (newSession.user?.id) {
-          const profileData = await profileService.getUserProfile(
+          const profileData = await profileService.getProfileById(
             newSession.user.id
           );
           if (mounted) {
@@ -214,7 +210,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
         loadProfile,
         updateProfileState,
         updateUserProfile,
-        updateUserActivities,
+        // updateUserActivities,
       }}
     >
       {children}

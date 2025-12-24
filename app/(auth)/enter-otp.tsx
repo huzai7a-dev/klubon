@@ -93,7 +93,7 @@ export default function EnterOtpScreen() {
 
   const handleAuthSuccess = async (session: any) => {
     await signIn(session);
-    const profileData = await profileService.getUserProfile(session.user.id);
+    const profileData = await profileService.getProfileById(session.user.id);
 
     if (profileData) {
       router.replace("/(app)/discover");

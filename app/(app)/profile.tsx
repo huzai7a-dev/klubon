@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React from "react";
 import {
   Image,
   ScrollView,
@@ -10,11 +10,13 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import RatingSummary from "@/components/RatingSummary";
+import FilterChip from "@/components/ui/FilterChip";
+import SettingToggle from "@/components/ui/SettingToggle";
 import { Colors } from "@/constants/theme";
 import { useSession } from "@/contexts/AuthContext";
-import RatingSummary from "../../components/RatingSummary";
-import FilterChip from "../../components/ui/FilterChip";
-import SettingToggle from "../../components/ui/SettingToggle";
+import activitiesService from "@/services/activities.service";
+import { useQuery } from "@tanstack/react-query";
 
 // Mock Data
 const USER_PROFILE = {
@@ -26,15 +28,13 @@ const USER_PROFILE = {
   reviewCount: 24,
 };
 
-const INITIAL_ACTIVITIES = [
-  { id: "1", label: "Tennis", selected: true },
-  { id: "2", label: "Padel", selected: true },
-  { id: "3", label: "Pickleball", selected: true },
-];
-
 export default function MyProfileScreen() {
   const { signOut, profile, updateUserProfile } = useSession();
-  const [activities, setActivities] = useState(INITIAL_ACTIVITIES);
+  const { data: activities } = useQuery({
+    queryKey: ['activities', profile?.id],
+    queryFn: () => activitiesService.getActivitiesByProfileId(profile!.id),
+    enabled: !!profile?.id,
+  })
   const isCompetitive = profile?.competitive_toggle ?? false;
 
 
@@ -99,10 +99,10 @@ export default function MyProfileScreen() {
             <Text style={styles.sectionTitle}>My Activities</Text>
           </View>
           <View style={styles.chipContainer}>
-            {profile?.user_activities?.map((activity) => (
+            {activities?.map((activity) => (
               <FilterChip
-                key={activity.id}
-                label={activity?.activities?.name}
+                key={activity.activity?.id}
+                label={activity.activity?.name}
                 isActive={true}
                 onPress={() => handleRemoveActivity(activity.id)}
               />
